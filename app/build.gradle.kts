@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.grasstools.positionalert"
+    namespace = "com.grasstools.tangential"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.grasstools.positionalert"
+        applicationId = "com.grasstools.tangential"
         minSdk = 31
         targetSdk = 34
         versionCode = 1

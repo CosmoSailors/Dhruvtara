@@ -1,4 +1,4 @@
-package com.grasstools.positionalert.ui.theme
+package com.grasstools.tangential.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

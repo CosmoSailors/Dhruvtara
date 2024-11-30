@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Position Alert"
+rootProject.name = "Tangential"
 include(":app")
