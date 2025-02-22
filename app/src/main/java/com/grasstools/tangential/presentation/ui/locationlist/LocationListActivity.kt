@@ -2,8 +2,10 @@ package com.grasstools.tangential.presentation.ui.locationlist
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,36 +23,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.domain.model.LocationTriggers
 import com.grasstools.tangential.presentation.ui.locationlist.ui.theme.TangentialTheme
+import com.grasstools.tangential.presentation.ui.mainscreen.viewmodel
+import kotlinx.coroutines.launch
 
 data class LocationItem(val name: String, var isDndEnabled: Boolean)
 
 class LocationListActivity : ComponentActivity() {
+    private val database by lazy { (application as DruvTaraApplication).database }
+
+    private val viewModel by viewModels<LocationViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return LocationViewModel(database.dao()) as T // Use database from Application
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("asv", database.toString())
         setContent {
             TangentialTheme {
-                LocationListScreen()
+                LocationListScreen(viewModel)
             }
         }
     }
 }
 
 @Composable
-fun LocationListScreen() {
-    var locations by remember {
-        mutableStateOf(
-            listOf<LocationItem>()
-        )
-    }
+fun LocationListScreen(vm: LocationViewModel) {
+    val locationsList by vm.getAllRecords().collectAsState(initial = emptyList()) // Collect Flow as State
 
-    fun addLocation(name: String) {
-        if (locations.none { it.name == name }) {
-            locations = locations + LocationItem(name, true)
-        }
-    }
-
-    addLocation("Home")
 
 
     LazyColumn(
@@ -59,54 +70,20 @@ fun LocationListScreen() {
             .background(Color.Black)
             .padding(16.dp)
     ) {
-        items(locations) { location ->
+        items(locationsList) { location ->
             LocationRow(
                 location = location,
-                onToggle = {
-                    locations = locations.map {
-                        if (it.name == location.name) it.copy(isDndEnabled = !it.isDndEnabled)
-                        else it
-                    }
-                },onDelete = {
-
-                    locations = locations.filter { it.name != location.name }
-                }
-
+                onToggle = { vm.updateDndStatus(location) },
+                onDelete = { vm.deleteLocation(location)
+        }
             )
         }
     }
 }
 
+
 @Composable
-fun LocationRow(location: LocationItem, onToggle: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onToggle() },
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(
-                text = location.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = if (location.isDndEnabled) "DND Enabled" else "Tap to enable",
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
-        }
-        Switch(
-            checked = location.isDndEnabled,
-            onCheckedChange = { onToggle() }
-        )
-    }
-}
-@Composable
-fun LocationRow(location: LocationItem, onToggle: () -> Unit, onDelete: () -> Unit) {
+fun LocationRow(location: LocationTriggers, onToggle: () -> Unit, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,10 +111,3 @@ fun LocationRow(location: LocationItem, onToggle: () -> Unit, onDelete: () -> Un
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun LocationListPreview() {
-    TangentialTheme {
-        LocationListScreen()
-    }
-}
