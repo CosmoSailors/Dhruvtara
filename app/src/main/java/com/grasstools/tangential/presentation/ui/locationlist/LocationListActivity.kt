@@ -1,3 +1,6 @@
+package com.grasstools.tangential.presentation.ui.locationlist
+
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,6 +49,8 @@ fun LocationListScreen() {
             locations = locations + LocationItem(name, true)
         }
     }
+
+    addLocation("Home")
 
 
     LazyColumn(
