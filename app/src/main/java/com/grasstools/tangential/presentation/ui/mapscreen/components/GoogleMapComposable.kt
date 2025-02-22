@@ -2,26 +2,20 @@ package com.grasstools.tangential.presentation.ui.mapscreen.components
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.*
 
 @Composable
-fun GoogleMapComposable(modifier: Modifier = Modifier) {  // Add modifier parameter
+fun GoogleMapComposable(modifier: Modifier = Modifier, sliderPosition: Float, onLatLongChange: (LatLng) -> Unit) {
     val context = LocalContext.current
     var map: GoogleMap? by remember { mutableStateOf(null) }
-    val sydney = remember { LatLng(-34.0, 151.0) }
+    var marker: Marker? by remember { mutableStateOf(null) }
+    var markerPosition by remember { mutableStateOf(LatLng(-34.0, 151.0)) }
+    var circle: Circle? by remember { mutableStateOf(null) }
 
     AndroidView(
         factory = {
@@ -29,18 +23,50 @@ fun GoogleMapComposable(modifier: Modifier = Modifier) {  // Add modifier parame
                 onCreate(Bundle())
                 getMapAsync { googleMap ->
                     map = googleMap
-                    googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+
+                    marker = googleMap.addMarker(
+                        MarkerOptions().position(markerPosition).title("Drag me").draggable(true)
+                    )
+
+                    circle = googleMap.addCircle(
+                        CircleOptions()
+                            .center(markerPosition)
+                            .radius(10.0 + (sliderPosition * 190))
+                            .strokeColor(0x550000FF)
+                            .fillColor(0x220000FF)
+                    )
+                    onLatLongChange(markerPosition)
+
+
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 10f))
+
+                    googleMap.setOnMapClickListener { latLng ->
+                        markerPosition = latLng
+                        marker?.position = latLng
+                        circle?.center = latLng
+                        onLatLongChange(latLng)
+                    }
+
+                    googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
+                        override fun onMarkerDragStart(marker: Marker) {}
+
+                        override fun onMarkerDrag(marker: Marker) {
+                            markerPosition = marker.position
+                            circle?.center = markerPosition
+                            onLatLongChange(markerPosition)
+                        }
+
+                        override fun onMarkerDragEnd(marker: Marker) {}
+                    })
                 }
             }
         },
-        modifier = modifier.fillMaxWidth(),
-        update = { mapView ->
-            map?.let { googleMap ->
-                // Update map if needed
-            }
-        }
+        modifier = modifier.fillMaxWidth()
     )
+
+    LaunchedEffect(sliderPosition) {
+        circle?.radius = 10.0 + (sliderPosition * 190)
+    }
 
     DisposableEffect(Unit) {
         onDispose {

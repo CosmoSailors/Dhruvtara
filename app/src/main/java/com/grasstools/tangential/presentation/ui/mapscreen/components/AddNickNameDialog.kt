@@ -14,11 +14,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.grasstools.tangential.presentation.ui.mainscreen.viewmodel
 
 @Composable
 fun AddNickNameDialog(
     onDismissRequest: () -> Unit,
-    onLocationAdded: (String) -> Unit
+    onLocationAdded: (String) -> Unit,
+    latitude: Double,
+    longitude: Double,
+    radius: Float
 ) {
     var nickname by remember { mutableStateOf("") }
 
@@ -27,9 +31,18 @@ fun AddNickNameDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Card(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
                 DialogHeader(onDismissRequest, onLocationAdded, nickname)
-                DialogContent(nickname) { nickname = it }
+                DialogContent(
+                    nickname,
+                    latitude = latitude,
+                    longitude = longitude,
+                    radius = radius,
+                    onNicknameChange = { nickname = it })
             }
         }
     }
@@ -42,7 +55,9 @@ private fun DialogHeader(
     nickname: String
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -57,20 +72,51 @@ private fun DialogHeader(
 }
 
 @Composable
-private fun DialogContent(nickname: String, onNicknameChange: (String) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Latitude: ", style = MaterialTheme.typography.titleMedium)
-        Text(text = "Longitude: ", style = MaterialTheme.typography.titleMedium)
+private fun DialogContent(
+    nickname: String,
+    onNicknameChange: (String) -> Unit,
+    latitude: Double,
+    longitude: Double,
+    radius: Float
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Row {
+            Column(Modifier.weight(1f)) {
+                Text(text = "Latitude: ${latitude}", style = MaterialTheme.typography.titleMedium)
+
+                Text(
+                    text = "Longitude: ${longitude}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+            }
+
+        }
+        Text(text = "Radius: ${radius}m ", style = MaterialTheme.typography.titleMedium)
+
+
+
+
 
         OutlinedTextField(
             value = nickname,
             onValueChange = onNicknameChange,
             label = { Text("Location Name") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
 
-        Text(text = "Save As", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 32.dp))
+        Text(
+            text = "Save As",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(top = 32.dp)
+        )
         SaveAsChips()
     }
 }
@@ -88,7 +134,11 @@ private fun SaveAsChips() {
                 onClick = { Log.d("AssistChip", "$label clicked") },
                 label = { Text(label) },
                 leadingIcon = {
-                    Icon(icon, contentDescription = "$label Icon", Modifier.size(AssistChipDefaults.IconSize))
+                    Icon(
+                        icon,
+                        contentDescription = "$label Icon",
+                        Modifier.size(AssistChipDefaults.IconSize)
+                    )
                 }
             )
         }
