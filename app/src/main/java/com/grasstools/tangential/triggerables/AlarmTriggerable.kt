@@ -1,6 +1,6 @@
 package com.grasstools.tangential.triggerables
 
-import com.grasstools.tangential.services.Triggerable
+import com.grasstools.tangential.triggerables.Triggerable
 
 object AlarmTriggerable: Triggerable {
     override fun onEntry(config: String) {
