@@ -90,8 +90,12 @@ fun LocationRow(
 ) {
     val isExpanded = location.id.toString() == expandedLocationId
     Card(
+        shape = RoundedCornerShape(24.dp), // Sets the border radius
         modifier =  Modifier.fillMaxWidth()
-            .padding(4.dp)
+            .padding(4.dp) ,
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+
+
     ) {
     Column(
         modifier = Modifier
@@ -167,12 +171,16 @@ fun LocationRow(
 
 
 
-                IconButton(onClick = { onDelete() }) {
+                IconButton(onClick = { onDelete() }, Modifier.align(
+                    Alignment.Bottom
+                )) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete",
-                        tint = Color.Red,
-                        modifier = Modifier.size(36.dp)
+                        tint = Color.Gray,
+                        modifier = Modifier.size(36.dp).align(
+                             Alignment.CenterVertically
+                        )
                     )
                 }
             }

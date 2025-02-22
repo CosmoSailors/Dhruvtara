@@ -40,6 +40,8 @@ fun GoogleMapComposable(
                     onLatLongChange(newLatLng)
                     map?.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12f))
                     marker?.position = newLatLng
+                    circle?.center = markerPosition
+
                     Log.i("GoogleMapComposable", "Centered on $newLatLng")
                 } ?: Log.e("GoogleMapComposable", "Failed to get location")
             }
