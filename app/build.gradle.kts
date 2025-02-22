@@ -71,5 +71,8 @@ dependencies {
     implementation(libs.androidx.fragment.compose)
     implementation(libs.play.services.location)
     implementation(libs.kotlin.coroutines.play)
+
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 }
 
