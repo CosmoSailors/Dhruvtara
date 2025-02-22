@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.grasstools.tangential"
-        minSdk = 31
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -71,5 +71,10 @@ dependencies {
     implementation(libs.androidx.fragment.compose)
     implementation(libs.play.services.location)
     implementation(libs.kotlin.coroutines.play)
+
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation ("com.google.android.material:material:1.12.0") // Use latest version
+
+
 }
 
