@@ -6,8 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -57,7 +61,11 @@ fun LocationListScreen() {
                         if (it.name == location.name) it.copy(isDndEnabled = !it.isDndEnabled)
                         else it
                     }
+                },onDelete = {
+
+                    locations = locations.filter { it.name != location.name }
                 }
+
             )
         }
     }
@@ -91,6 +99,34 @@ fun LocationRow(location: LocationItem, onToggle: () -> Unit) {
         )
     }
 }
+@Composable
+fun LocationRow(location: LocationItem, onToggle: () -> Unit, onDelete: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(Color.DarkGray, shape = RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = location.name,
+            color = Color.White,
+            fontSize = 18.sp,
+            modifier = Modifier.weight(1f)
+        )
+
+        Switch(
+            checked = location.isDndEnabled,
+            onCheckedChange = { onToggle() }
+        )
+
+        IconButton(onClick = { onDelete() }) {
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
