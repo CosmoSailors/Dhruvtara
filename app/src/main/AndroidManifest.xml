@@ -5,8 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -36,6 +34,11 @@
             android:exported="false"
             android:label="@string/title_activity_maps"
             />
+        <activity
+            android:name=".presentation.ui.locationlist.LocationListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_location_list"
+            android:theme="@style/Theme.Tangential" />
         <activity
             android:name=".presentation.ui.mainscreen.MainActivity"
             android:exported="false"
