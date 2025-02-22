@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -28,21 +30,23 @@
              project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
              "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
         -->
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
         <activity
             android:name=".presentation.ui.mapscreen.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps"
             />
         <activity
-            android:name=".presentation.ui.locationlist.LocationListActivity"
-            android:exported="false"
-            android:label="@string/title_activity_location_list"
-            android:theme="@style/Theme.Tangential" />
-        <activity
             android:name=".presentation.ui.mainscreen.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
+            android:theme="@style/Theme.Tangential" />
+        <activity
+            android:name=".presentation.ui.locationlist.LocationListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_location_list"
             android:theme="@style/Theme.Tangential" />
         <activity
             android:name=".MainActivity"
@@ -56,9 +60,9 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+<!--        <meta-data-->
+<!--            android:name="com.google.android.geo.API_KEY"-->
+<!--            android:value="${MAPS_API_KEY}" />-->
     </application>
 
 </manifest>
