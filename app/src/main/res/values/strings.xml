@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">DruvTara</string>
     <string name="service_notification_channel_name">DruvTara Service</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
