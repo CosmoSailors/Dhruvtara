@@ -1,13 +1,14 @@
 package com.grasstools.tangential.triggerables
 
+import android.util.Log
 import com.grasstools.tangential.triggerables.Triggerable
 
 object DNDTrigerable: Triggerable {
     override fun onEntry(config: String) {
-        TODO("Not yet implemented")
+        Log.i("Triggered", "We Enter")
     }
 
     override fun onExit(config: String) {
-        TODO("Not yet implemented")
+        Log.i("Triggered", "We Exit from Rome")
     }
 }

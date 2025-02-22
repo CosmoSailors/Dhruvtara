@@ -43,9 +43,18 @@ class GeofenceManager : Service() {
         timer?.cancel() // Always cancel your timer to prevent leaks.
     }
 
-    private val POLL_RATE: Long = 15*1000
+    private val POLL_RATE: Long = 5*1000
     private var timer: Timer? = null
-    private val taggedGeofences = mutableListOf<TaggedGeofence>()
+    private val taggedGeofences = mutableListOf<TaggedGeofence>(
+        TaggedGeofence(false, Geofence(
+            "Yo mama is here",
+            37.40948,
+            -121.49235,
+            500.0f,
+            GeofenceType.DND,
+            "null"
+        )
+    ))
 
     private fun startForeground() {
         try {
@@ -100,7 +109,9 @@ class GeofenceManager : Service() {
     )
 
     private fun Location.isInside(geofence: Geofence): Boolean{
-        return distanceToGeofence(this, geofence) < geofence.radius
+        val x = distanceToGeofence(this, geofence)
+        Log.i("GeofenceManagerService", "isInside: $x")
+        return x < geofence.radius
     }
 
     private fun distanceToGeofence(currentLocation: Location, geofence: Geofence): Float {
