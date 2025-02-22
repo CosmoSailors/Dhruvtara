@@ -8,12 +8,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.DruvTaraApplication
 import com.grasstools.tangential.domain.model.LocationTriggers
 import com.grasstools.tangential.ui.theme.TangentialTheme
@@ -28,7 +34,7 @@ class MapsActivity : ComponentActivity() {
     private val viewModel by viewModels<MapsViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MapsViewModel(database.dao()) as T
+                return MapsViewModel(database.dao(), applicationContext) as T
             }
         }
     }
@@ -43,18 +49,38 @@ class MapsActivity : ComponentActivity() {
     @Composable
     private fun MapsScreen() {
         var showDialog by remember { mutableStateOf(false) }
+
         TangentialTheme {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                Column {
-                    GoogleMapComposable(modifier = Modifier.weight(0.70f), sliderPosition = viewModel.sliderPosition, onLatLongChange = {viewModel.updateLatLong(it)})
-                    AddLocationCard(
-                        modifier = Modifier.weight(0.30f),
-                        onSavedLocationsClick = { onSavedLocationsClick() },
-                        onAddLocationClick = { showDialog = true },
-                        onSettingsClick = { onSettingsClick() },
+                Box(modifier = Modifier.fillMaxSize()) {
+                    GoogleMapComposable(
+                        modifier = Modifier.fillMaxSize(),
                         sliderPosition = viewModel.sliderPosition,
-                        onSliderChange = { viewModel.updateSliderPosition(it) }
+                        onLatLongChange = { viewModel.updateLatLong(it) }
+                        , latLng = LatLng( viewModel.latitude, viewModel.longitude )
                     )
+
+
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                    ) {
+
+                        AddLocationCard(
+                            modifier = Modifier
+                                .fillMaxWidth().height(200.dp)
+                                , // Increased minimum height
+                            onSavedLocationsClick = { onSavedLocationsClick() },
+                            onAddLocationClick = { showDialog = true },
+                            onSettingsClick = { onSettingsClick() },
+                            sliderPosition = viewModel.sliderPosition,
+                            onSliderChange = { viewModel.updateSliderPosition(it) }
+                        )
+                    }
+
+
+
                     if (showDialog) {
                         AddNickNameDialog(
                             onDismissRequest = { showDialog = false },
@@ -62,7 +88,6 @@ class MapsActivity : ComponentActivity() {
                                 insertTrigger(nickname)
                                 showDialog = false
                                 navigateToLocationListActivity()
-
                             },
                             latitude = viewModel.latitude,
                             longitude = viewModel.longitude,
@@ -73,7 +98,6 @@ class MapsActivity : ComponentActivity() {
             }
         }
     }
-
     private fun insertTrigger(nickname: String) {
         viewModel.viewModelScope.launch {
             viewModel.insertLocationTrigger(
