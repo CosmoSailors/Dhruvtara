@@ -37,15 +37,16 @@ class LocationListActivity : ComponentActivity() {
 fun LocationListScreen() {
     var locations by remember {
         mutableStateOf(
-            listOf(
-                LocationItem("Home", true),
-                LocationItem("Work", false),
-                LocationItem("Gym", false),
-                LocationItem("Cafe", false),
-                LocationItem("Library", false),
-            )
+            listOf<LocationItem>()
         )
     }
+
+    fun addLocation(name: String) {
+        if (locations.none { it.name == name }) {
+            locations = locations + LocationItem(name, true)
+        }
+    }
+
 
     LazyColumn(
         modifier = Modifier
