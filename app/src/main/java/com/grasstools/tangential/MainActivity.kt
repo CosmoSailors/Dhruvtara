@@ -27,7 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.LocationServices
 import com.grasstools.tangential.data.db.TangentialDatabase
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsActivity
-import com.grasstools.tangential.services.DruvTaraService
+import com.grasstools.tangential.services.GeofenceManager
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
         notificationManager.createNotificationChannel(notifChannel)
 
         // launch service
-        val intent = Intent(this, DruvTaraService::class.java)
+        val intent = Intent(this, GeofenceManager::class.java)
         this.startForegroundService(intent)
 
         enableEdgeToEdge()
