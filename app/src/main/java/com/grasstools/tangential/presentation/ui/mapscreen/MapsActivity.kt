@@ -88,6 +88,8 @@ class MapsActivity : ComponentActivity() {
     }
 
     private fun onSavedLocationsClick() {
+        startActivity(Intent(this, LocationListActivity::class.java))
+
         Log.i("MapsActivity", "Saved Locations Clicked")
     }
 
