@@ -14,17 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.grasstools.tangential.CustomApplication
+import com.grasstools.tangential.DruvTaraApplication
 import com.grasstools.tangential.domain.model.LocationTriggers
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
+import com.grasstools.tangential.presentation.ui.locationlist.LocationViewModel
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
 import kotlinx.coroutines.launch
 
 class MapsActivity : ComponentActivity() {
 
-    private val database by lazy { (application as CustomApplication).database }
+    private val database by lazy { (application as DruvTaraApplication).database }
     private val viewModel by viewModels<MapsViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

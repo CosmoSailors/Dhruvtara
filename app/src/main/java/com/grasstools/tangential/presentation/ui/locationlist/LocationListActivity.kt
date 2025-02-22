@@ -25,8 +25,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.domain.model.LocationTriggers
 import com.grasstools.tangential.presentation.ui.locationlist.ui.theme.TangentialTheme
+import com.grasstools.tangential.presentation.ui.mainscreen.viewmodel
+import kotlinx.coroutines.launch
 
 data class LocationItem(val name: String, var isDndEnabled: Boolean)
 
@@ -56,22 +60,8 @@ class LocationListActivity : ComponentActivity() {
 
 @Composable
 fun LocationListScreen(vm: LocationViewModel) {
-    var locations by remember {
-        mutableStateOf(
-            listOf<LocationItem>()
-        )
-           }
-    LaunchedEffect(Unit) { // Ensures it runs only once
-        vm.insertDummyData()
-    }
+    val locationsList by vm.getAllRecords().collectAsState(initial = emptyList()) // Collect Flow as State
 
-    fun addLocation(name: String) {
-        if (locations.none { it.name == name }) {
-            locations = locations + LocationItem(name, true)
-        }
-    }
-
-    addLocation("Home")
 
 
     LazyColumn(
@@ -80,54 +70,20 @@ fun LocationListScreen(vm: LocationViewModel) {
             .background(Color.Black)
             .padding(16.dp)
     ) {
-        items(locations) { location ->
+        items(locationsList) { location ->
             LocationRow(
                 location = location,
-                onToggle = {
-                    locations = locations.map {
-                        if (it.name == location.name) it.copy(isDndEnabled = !it.isDndEnabled)
-                        else it
-                    }
-                },onDelete = {
-
-                    locations = locations.filter { it.name != location.name }
-                }
-
+                onToggle = { vm.updateDndStatus(location) },
+                onDelete = { vm.deleteLocation(location)
+        }
             )
         }
     }
 }
 
+
 @Composable
-fun LocationRow(location: LocationItem, onToggle: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onToggle() },
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(
-                text = location.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = if (location.isDndEnabled) "DND Enabled" else "Tap to enable",
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
-        }
-        Switch(
-            checked = location.isDndEnabled,
-            onCheckedChange = { onToggle() }
-        )
-    }
-}
-@Composable
-fun LocationRow(location: LocationItem, onToggle: () -> Unit, onDelete: () -> Unit) {
+fun LocationRow(location: LocationTriggers, onToggle: () -> Unit, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

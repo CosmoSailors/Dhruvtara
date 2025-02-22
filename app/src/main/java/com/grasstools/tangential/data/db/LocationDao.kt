@@ -27,6 +27,13 @@ interface LocationDao {
     @Query("DELETE FROM locations WHERE id = :locationId")
     suspend fun deleteLocationById(locationId: Int)
 
+    @Query("UPDATE locations SET isDndEnabled = :isDndEnabled WHERE id = :locationId")
+    suspend fun updateDndStatus(locationId: Int, isDndEnabled: Boolean)
+
+    @Query("DELETE FROM locations")
+    suspend fun deleteAllLocations()
+
+
 
 
 
