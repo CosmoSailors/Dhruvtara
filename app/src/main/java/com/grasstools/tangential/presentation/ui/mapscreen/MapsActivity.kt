@@ -18,7 +18,6 @@ import com.grasstools.tangential.DruvTaraApplication
 import com.grasstools.tangential.domain.model.LocationTriggers
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
-import com.grasstools.tangential.presentation.ui.locationlist.LocationViewModel
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
 import kotlinx.coroutines.launch
@@ -47,12 +46,14 @@ class MapsActivity : ComponentActivity() {
         TangentialTheme {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Column {
-                    GoogleMapComposable(modifier = Modifier.weight(0.70f))
+                    GoogleMapComposable(modifier = Modifier.weight(0.70f), sliderPosition = viewModel.sliderPosition, onLatLongChange = {viewModel.updateLatLong(it)})
                     AddLocationCard(
                         modifier = Modifier.weight(0.30f),
                         onSavedLocationsClick = { onSavedLocationsClick() },
                         onAddLocationClick = { showDialog = true },
-                        onSettingsClick = { onSettingsClick() }
+                        onSettingsClick = { onSettingsClick() },
+                        sliderPosition = viewModel.sliderPosition,
+                        onSliderChange = { viewModel.updateSliderPosition(it) }
                     )
                     if (showDialog) {
                         AddNickNameDialog(
@@ -61,7 +62,11 @@ class MapsActivity : ComponentActivity() {
                                 insertTrigger(nickname)
                                 showDialog = false
                                 navigateToLocationListActivity()
-                            }
+
+                            },
+                            latitude = viewModel.latitude,
+                            longitude = viewModel.longitude,
+                            radius = viewModel.radius
                         )
                     }
                 }
@@ -74,10 +79,10 @@ class MapsActivity : ComponentActivity() {
             viewModel.insertLocationTrigger(
                 LocationTriggers(
                     name = nickname,
-                    latitude = 12.9567,
-                    longitude = 79.1345,
+                    latitude = viewModel.latitude,
+                    longitude = viewModel.longitude,
                     isDndEnabled = false,
-                    radius = 5.5
+                    radius = viewModel.radius.toDouble()
                 )
             )
         }
