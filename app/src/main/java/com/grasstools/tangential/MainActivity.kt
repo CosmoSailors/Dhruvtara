@@ -6,7 +6,9 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -53,10 +55,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val splashscreen = installSplashScreen()
-        var keepSplashScreen = true
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         checkAndRequestPermissions()
+
+        var keepSplashScreen = true
         splashscreen.setKeepOnScreenCondition { keepSplashScreen }
         lifecycleScope.launch {
             delay(1000)
@@ -72,17 +76,14 @@ class MainActivity : ComponentActivity() {
         notifChannel.description = getString(R.string.notif_channel_desc)
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notifChannel)
+        if (!notificationManager.isNotificationPolicyAccessGranted) {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+            startActivity(intent)
+        }
 
         // launch service
         val intent = Intent(this, GeofenceManager::class.java)
         this.startForegroundService(intent)
-
-        enableEdgeToEdge()
-        setContent {
-            TangentialTheme {
-
-            }
-        }
     }
 
 
@@ -92,7 +93,6 @@ class MainActivity : ComponentActivity() {
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
-                // Permission is already granted
                 navigateToNextActivity()
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
@@ -103,7 +103,6 @@ class MainActivity : ComponentActivity() {
                 locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
             }
             else -> {
-                // Request the permission
                 locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
             }
         }
@@ -142,5 +141,3 @@ fun Greeting(modifier: Modifier = Modifier, onButtonClick: () -> Unit) {  // Add
         modifier = modifier
     )
 }
-
-// ... (Preview remains the same)
