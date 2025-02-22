@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
 
 
 @Composable
@@ -106,8 +107,8 @@ fun MyScreen() {
     val context = LocalContext.current
     AddLocationCard(
         onSavedLocationsClick = {
-//            val intent = Intent(context, NextActivity::class.java)
-//            context.startActivity(intent)
+            val intent = Intent(context, LocationListActivity::class.java)
+            context.startActivity(intent)
         },
         onAddLocationClick = {
             // Handle add location click
