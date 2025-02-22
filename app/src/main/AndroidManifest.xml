@@ -17,6 +17,11 @@
         android:theme="@style/Theme.Tangential"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.ui.locationlist.LocationListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_location_list"
+            android:theme="@style/Theme.Tangential" />
+        <activity
             android:name=".presentation.ui.mainscreen.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
