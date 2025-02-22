@@ -2,8 +2,10 @@ package com.grasstools.tangential.presentation.ui.locationlist
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,27 +23,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.grasstools.tangential.DruvTaraApplication
 import com.grasstools.tangential.presentation.ui.locationlist.ui.theme.TangentialTheme
 
 data class LocationItem(val name: String, var isDndEnabled: Boolean)
 
 class LocationListActivity : ComponentActivity() {
+    private val database by lazy { (application as DruvTaraApplication).database }
+
+    private val viewModel by viewModels<LocationViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return LocationViewModel(database.dao()) as T // Use database from Application
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("asv", database.toString())
         setContent {
             TangentialTheme {
-                LocationListScreen()
+                LocationListScreen(viewModel)
             }
         }
     }
 }
 
 @Composable
-fun LocationListScreen() {
+fun LocationListScreen(vm: LocationViewModel) {
     var locations by remember {
         mutableStateOf(
             listOf<LocationItem>()
         )
+           }
+    LaunchedEffect(Unit) { // Ensures it runs only once
+        vm.insertDummyData()
     }
 
     fun addLocation(name: String) {
@@ -134,10 +155,3 @@ fun LocationRow(location: LocationItem, onToggle: () -> Unit, onDelete: () -> Un
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun LocationListPreview() {
-    TangentialTheme {
-        LocationListScreen()
-    }
-}

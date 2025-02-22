@@ -7,8 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
+        android:name=".DruvTaraApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,11 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="34">
-        <activity
-            android:name=".presentation.ui.alarmscreen.AlarmScreen"
-            android:exported="false"
-            android:label="@string/title_activity_alarm_screen"
-            android:theme="@style/Theme.App.Starting" />
+
+        <service
+            android:name=".services.DruvTaraService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location"></service>
+
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -52,6 +56,11 @@
             android:exported="false"
             android:label="@string/title_activity_location_list"
             android:theme="@style/Theme.Tangential" />
+        <activity
+            android:name=".presentation.ui.alarmscreen.AlarmScreen"
+            android:exported="false"
+            android:label="@string/title_activity_alarm_screen"
+            android:theme="@style/Theme.App.Starting" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
