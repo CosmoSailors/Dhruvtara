@@ -26,9 +26,10 @@ fun AddLocationCard(
     modifier: Modifier = Modifier,
     onSavedLocationsClick: () -> Unit,
     onAddLocationClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    sliderPosition: Float,
+    onSliderChange: (Float) -> Unit
 ) {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
 
     Card(
         modifier = modifier
@@ -44,11 +45,11 @@ fun AddLocationCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = "Adjust radius:", modifier = Modifier.padding(bottom = 4.dp)) // Text above Slider
+            Text(text = "Adjust radius: ${10 + (190*sliderPosition)}m", modifier = Modifier.padding(bottom = 4.dp)) // Text above Slider
 
             Slider(
                 value = sliderPosition,
-                onValueChange = { sliderPosition = it },
+                onValueChange = {onSliderChange(it)},
                 modifier = Modifier
                     .padding(32.dp, 0.dp, 32.dp, 32.dp)
                     .fillMaxWidth()
@@ -84,37 +85,6 @@ fun AddLocationCard(
     }
 }
 
-@Preview
-@Composable
-fun AddLocationCardPreview() {
-    val context = LocalContext.current
-    AddLocationCard(
-        onSavedLocationsClick = {
-            println("Saved Locations clicked")
-        },
-        onAddLocationClick = {
-            println("Add Location clicked")
-        },
-        onSettingsClick = {
-            println("Settings clicked")
-        }
-    )
-}
 
 
-@Composable
-fun MyScreen() {
-    val context = LocalContext.current
-    AddLocationCard(
-        onSavedLocationsClick = {
-            val intent = Intent(context, LocationListActivity::class.java)
-            context.startActivity(intent)
-        },
-        onAddLocationClick = {
-            // Handle add location click
-        },
-        onSettingsClick = {
-            // Handle settings click
-        }
-    )
-}
+

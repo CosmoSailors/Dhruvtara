@@ -47,12 +47,14 @@ class MapsActivity : ComponentActivity() {
         TangentialTheme {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Column {
-                    GoogleMapComposable(modifier = Modifier.weight(0.70f))
+                    GoogleMapComposable(modifier = Modifier.weight(0.70f), sliderPosition= viewModel.sliderPosition)
                     AddLocationCard(
                         modifier = Modifier.weight(0.30f),
                         onSavedLocationsClick = { onSavedLocationsClick() },
                         onAddLocationClick = { showDialog = true },
-                        onSettingsClick = { onSettingsClick() }
+                        onSettingsClick = { onSettingsClick() },
+                        sliderPosition = viewModel.sliderPosition,
+                        onSliderChange = { viewModel.updateSliderPosition(it) }
                     )
                     if (showDialog) {
                         AddNickNameDialog(
