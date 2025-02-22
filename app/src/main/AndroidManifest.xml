@@ -35,10 +35,10 @@
             android:value="AIzaSyB3TRR3zEt_oLp71MTzDB6VwfVbsOElOBw" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".presentation.ui.mapscreen.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps"
-            android:theme="@style/Theme.Map"/>
+            />
         <activity
             android:name=".presentation.ui.mainscreen.MainActivity"
             android:exported="false"
