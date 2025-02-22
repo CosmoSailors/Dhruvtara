@@ -1,6 +1,9 @@
 package com.grasstools.tangential
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -24,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.LocationServices
 import com.grasstools.tangential.data.db.TangentialDatabase
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsActivity
+import com.grasstools.tangential.services.DruvTaraService
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -58,6 +62,21 @@ class MainActivity : ComponentActivity() {
             delay(1000)
             keepSplashScreen = false
         }
+
+        // create a notification channel
+        val notifChannel = NotificationChannel(
+            "SERVICE_CHAN",
+            getString(R.string.notif_channel_name),
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        notifChannel.description = getString(R.string.notif_channel_desc)
+        val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notifChannel)
+
+        // launch service
+        val intent = Intent(this, DruvTaraService::class.java)
+        this.startForegroundService(intent)
+
         enableEdgeToEdge()
         setContent {
             TangentialTheme {
