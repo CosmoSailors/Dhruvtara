@@ -3,6 +3,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_location_list">LocationListActivity</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_alarm_screen">AlarmScreen</string>
     <string name="notif_channel_name">DruvTara Service</string>
     <string name="notif_channel_desc">DruvTara Service Desc</string>
 </resources>

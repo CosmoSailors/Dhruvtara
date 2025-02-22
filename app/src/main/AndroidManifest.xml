@@ -20,11 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="34">
+
         <service
             android:name=".services.DruvTaraService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location"></service>
+
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -39,11 +41,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+
         <activity
             android:name=".presentation.ui.mapscreen.MapsActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps"
-            />
+            android:label="@string/title_activity_maps" />
         <activity
             android:name=".presentation.ui.mainscreen.MainActivity"
             android:exported="false"
@@ -54,6 +56,11 @@
             android:exported="false"
             android:label="@string/title_activity_location_list"
             android:theme="@style/Theme.Tangential" />
+        <activity
+            android:name=".presentation.ui.alarmscreen.AlarmScreen"
+            android:exported="false"
+            android:label="@string/title_activity_alarm_screen"
+            android:theme="@style/Theme.App.Starting" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
