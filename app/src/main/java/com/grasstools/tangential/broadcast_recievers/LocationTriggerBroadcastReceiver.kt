@@ -30,6 +30,7 @@ class LocationTriggerBroadcastReceiver : BroadcastReceiver() {
         val geofencingTransition = geofencingEvent.geofenceTransition;
         // TODO: Updoot this to use new APIs, this is here for getting stuff done for now.
         @Suppress("DEPRECATION") val locationTrigger = intent.getSerializableExtra("locationTrigger")!! as LocationTrigger
+        Log.i(LOG_TAG, locationTrigger.toString())
 
         if (geofencingTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             onEnterLocationTrigger(locationTrigger)

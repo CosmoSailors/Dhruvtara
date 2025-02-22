@@ -55,7 +55,8 @@ class MainActivity : ComponentActivity() {
 
         locationPermissionRequest.launch(
             arrayOf(
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )
         )
     }
