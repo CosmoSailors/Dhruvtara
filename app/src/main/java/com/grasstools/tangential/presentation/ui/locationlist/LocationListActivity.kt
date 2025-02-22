@@ -50,6 +50,8 @@ fun LocationListScreen() {
         }
     }
 
+    addLocation("Home")
+
 
     LazyColumn(
         modifier = Modifier
