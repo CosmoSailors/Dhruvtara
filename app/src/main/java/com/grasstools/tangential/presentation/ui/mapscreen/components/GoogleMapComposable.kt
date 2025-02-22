@@ -10,12 +10,12 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 
 @Composable
-fun GoogleMapComposable(modifier: Modifier = Modifier, sliderPosition: Float) {
+fun GoogleMapComposable(modifier: Modifier = Modifier, sliderPosition: Float, onLatLongChange: (LatLng) -> Unit) {
     val context = LocalContext.current
     var map: GoogleMap? by remember { mutableStateOf(null) }
-    var marker: Marker? by remember { mutableStateOf(null) } // Store marker reference
-    var markerPosition by remember { mutableStateOf(LatLng(-34.0, 151.0)) } // Store marker position
-    var circle: Circle? by remember { mutableStateOf(null) } // Store circle reference
+    var marker: Marker? by remember { mutableStateOf(null) }
+    var markerPosition by remember { mutableStateOf(LatLng(-34.0, 151.0)) }
+    var circle: Circle? by remember { mutableStateOf(null) }
 
     AndroidView(
         factory = {
@@ -24,36 +24,36 @@ fun GoogleMapComposable(modifier: Modifier = Modifier, sliderPosition: Float) {
                 getMapAsync { googleMap ->
                     map = googleMap
 
-                    // Add initial marker
                     marker = googleMap.addMarker(
                         MarkerOptions().position(markerPosition).title("Drag me").draggable(true)
                     )
 
-                    // Add initial circle
                     circle = googleMap.addCircle(
                         CircleOptions()
                             .center(markerPosition)
-                            .radius(10.0 + (sliderPosition * 190)) // Initial Radius
-                            .strokeColor(0x550000FF) // Semi-transparent blue border
-                            .fillColor(0x220000FF) // Semi-transparent blue fill
+                            .radius(10.0 + (sliderPosition * 190))
+                            .strokeColor(0x550000FF)
+                            .fillColor(0x220000FF)
                     )
+                    onLatLongChange(markerPosition)
+
 
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 10f))
 
-                    // Update marker & circle when user taps on the map
                     googleMap.setOnMapClickListener { latLng ->
-                        markerPosition = latLng // Update marker position state
-                        marker?.position = latLng // Move marker
-                        circle?.center = latLng // Move circle
+                        markerPosition = latLng
+                        marker?.position = latLng
+                        circle?.center = latLng
+                        onLatLongChange(latLng)
                     }
 
-                    // Set drag listener to update the circle's position when the marker moves
                     googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
                         override fun onMarkerDragStart(marker: Marker) {}
 
                         override fun onMarkerDrag(marker: Marker) {
-                            markerPosition = marker.position // Update position state
-                            circle?.center = markerPosition // Move circle to match marker
+                            markerPosition = marker.position
+                            circle?.center = markerPosition
+                            onLatLongChange(markerPosition)
                         }
 
                         override fun onMarkerDragEnd(marker: Marker) {}
@@ -64,9 +64,8 @@ fun GoogleMapComposable(modifier: Modifier = Modifier, sliderPosition: Float) {
         modifier = modifier.fillMaxWidth()
     )
 
-    // **Update the radius when sliderPosition changes**
     LaunchedEffect(sliderPosition) {
-        circle?.radius = 10.0 + (sliderPosition * 190) // ✅ Updates dynamically
+        circle?.radius = 10.0 + (sliderPosition * 190)
     }
 
     DisposableEffect(Unit) {

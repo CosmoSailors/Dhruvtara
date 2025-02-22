@@ -145,15 +145,26 @@ fun LocationRow(
         if (isExpanded) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(
-                    text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}",
-                    fontSize = 14.sp,
+                Column (Modifier.weight(1f)){
+                    Text(
+                        text = "Latitude: ${location.latitude}",
+                        fontSize = 14.sp,
 
-                    modifier = Modifier.padding(top = 8.dp).weight(1f),
-                )
+                    )
+                    Text(
+                        text = "Longitude: ${location.longitude}",
+                        fontSize = 14.sp,
+
+                    )
+                    Text(
+                        text = "Radius: ${location.radius}",
+                        fontSize = 14.sp,
+
+                        )
+                }
+
 
 
                 IconButton(onClick = { onDelete() }) {
