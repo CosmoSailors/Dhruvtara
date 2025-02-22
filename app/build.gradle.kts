@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("kotlin-kapt")
+
 }
 
 android {
@@ -72,8 +74,10 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.kotlin.coroutines.play)
 
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation ("com.google.android.material:material:1.12.0") // Use latest version
+    implementation(libs.androidx.core.splashscreen)
+    implementation (libs.material)
+    implementation(libs.androidx.room.ktx)
+    kapt("androidx.room:room-compiler:2.6.1")// Use latest version
 
 
 }

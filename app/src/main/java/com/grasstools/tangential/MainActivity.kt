@@ -22,13 +22,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.LocationServices
+import com.grasstools.tangential.data.db.TangentialDatabase
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsActivity
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.room.Room
 
 class MainActivity : ComponentActivity() {
+
+
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
