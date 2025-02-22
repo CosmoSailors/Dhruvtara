@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.location.Location
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -16,17 +17,18 @@ import androidx.core.app.ServiceCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.repository.LocationTrigger
+import com.grasstools.tangential.repository.LocationTriggerRepository
 
 class DruvTaraService : Service() {
     private val TAG = "DruvTaraService"
 
     private val locationProvider = LocationServices.getFusedLocationProviderClient(DruvTaraApplication.getContext()!!)
+    private val locationTriggerRepository = LocationTriggerRepository()
 
     private val handler = Handler(Looper.getMainLooper())
     private val pollLocation = object: Runnable {
         override fun run() {
-            Log.i(TAG, "WE RUNNING!!!")
-
             if (ActivityCompat.checkSelfPermission(
                     DruvTaraApplication.getContext()!!,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -43,6 +45,9 @@ class DruvTaraService : Service() {
             locationProvider.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                 .addOnSuccessListener { location ->
                     Log.i(TAG, "Location: ${location.latitude}, ${location.longitude}")
+                    for (trigger in locationTriggerRepository.getAllLocationTriggers()) {
+                        Log.i(TAG, "Distance to trigger ${trigger.name}: ${distanceToTrigger(location.latitude, location.longitude, trigger)}")
+                    }
                 }
 
             handler.postDelayed(this, 5000)
@@ -74,4 +79,16 @@ class DruvTaraService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+
+    fun distanceToTrigger(latitude: Double, longitude: Double, trigger: LocationTrigger): Float {
+        var currentLocation = Location("current")
+        currentLocation.latitude = latitude
+        currentLocation.longitude = longitude
+
+        var triggerLocation = Location("trigger")
+        triggerLocation.latitude = trigger.latitude
+        triggerLocation.longitude = trigger.longitude
+
+        return currentLocation.distanceTo(triggerLocation)
+    }
 }
