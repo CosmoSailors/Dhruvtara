@@ -1,6 +1,7 @@
 package com.grasstools.tangential
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.grasstools.tangential.models.LocationTrigger
+import com.grasstools.tangential.models.LocationTriggerModel
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,6 +71,11 @@ fun Greeting(modifier: Modifier = Modifier) {
     var locationInfo by remember {
         mutableStateOf("")
     }
+
+    var locTrigModel by remember {
+        mutableStateOf(LocationTriggerModel())
+    }
+
     Button(
         modifier = modifier,
         onClick = {
@@ -79,6 +87,13 @@ fun Greeting(modifier: Modifier = Modifier) {
                 res.let { loc ->
                     locationInfo = "Current location is \n" + "lat : ${loc.latitude}\n" +
                             "long : ${loc.longitude}\n" + "fetched at ${System.currentTimeMillis()}"
+                    locTrigModel.addLocationTrigger(LocationTrigger("test", loc.latitude, loc.longitude, 50f)) { success ->
+                        if (success) {
+                            Toast.makeText(DruvTaraApplication.getContext()!!, "succ", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(DruvTaraApplication.getContext()!!, "fail", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
 
             }
