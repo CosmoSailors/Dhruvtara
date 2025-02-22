@@ -43,7 +43,7 @@ class GeofenceManager : Service() {
         timer?.cancel() // Always cancel your timer to prevent leaks.
     }
 
-    private val POLL_RATE: Long = 60*1000
+    private val POLL_RATE: Long = 15*1000
     private var timer: Timer? = null
     private val taggedGeofences = mutableListOf<TaggedGeofence>()
 
@@ -65,11 +65,13 @@ class GeofenceManager : Service() {
 
     private fun scheduleLocationPolling() {
         timer = Timer()
+        Log.i("GeofenceManagerService", "Polling location...")
         timer?.schedule(object : TimerTask() {
             override fun run() {
                 locationProvider
                     .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener { location ->
+                        Log.i("GeofenceManagerService", "location is (${location.latitude},${location.longitude})")
                         for (tagged_geofence in taggedGeofences) {
                             val geofence = tagged_geofence.geofence;
                             val triggerable = when (geofence.type) {
