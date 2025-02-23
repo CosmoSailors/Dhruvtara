@@ -37,23 +37,7 @@ import kotlinx.coroutines.launch
 import androidx.room.Room
 
 class MainActivity : ComponentActivity() {
-
-
-
-    private val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.all { it.value }) {
-            // All permissions granted, navigate to next activity
-            navigateToNextActivity()
-        } else {
-            // Handle permission denial (e.g., show a message)
-            // You might want to request permissions again or explain why they are needed.
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
         val splashscreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -86,6 +70,15 @@ class MainActivity : ComponentActivity() {
         this.startForegroundService(intent)
     }
 
+    private val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.all { it.value }) {
+            navigateToNextActivity()
+        } else {
+            // TODO: Handle permission denial (e.g., show a message)
+        }
+    }
 
     private fun checkAndRequestPermissions() {
         when {
@@ -96,10 +89,7 @@ class MainActivity : ComponentActivity() {
                 navigateToNextActivity()
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                // Show rationale if needed (optional)
-                // ... explain why the permission is needed ...
-
-                // Then request the permission
+                // Show rationale if needed
                 locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
             }
             else -> {
@@ -112,32 +102,4 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, MapsActivity::class.java) // Replace NextActivity
         startActivity(intent)
     }
-}
-
-@Composable
-fun Greeting(modifier: Modifier = Modifier, onButtonClick: () -> Unit) {  // Add a parameter
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val fusedLocationClient = remember {
-        LocationServices.getFusedLocationProviderClient(context)
-    }
-    var locationInfo by remember {
-        mutableStateOf("")
-    }
-    Button(
-        modifier = modifier,
-        onClick = {
-            onButtonClick() // Call the passed function to check permissions
-
-            scope.launch(Dispatchers.IO) {
-                // ... (rest of your location code)
-            }
-        }
-    ) {
-        Text("Click")
-    }
-    Text(
-        text = locationInfo,
-        modifier = modifier
-    )
 }
