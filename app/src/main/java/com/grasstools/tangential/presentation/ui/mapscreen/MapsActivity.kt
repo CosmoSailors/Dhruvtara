@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.presentation.ui.alarmscreen.AlarmScreen
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
@@ -70,7 +71,9 @@ class MapsActivity : ComponentActivity() {
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                     ) {
-                        Button(onClick = { viewModel.getCurrentLocation()}, modifier = Modifier
+                        Button(onClick = {
+                            viewModel.getCurrentLocation()
+                                         }, modifier = Modifier
                             .padding(4.dp)
                             .align(Alignment.CenterHorizontally)
                         ) {
