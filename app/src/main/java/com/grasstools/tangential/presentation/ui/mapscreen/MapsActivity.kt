@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -58,17 +59,25 @@ class MapsActivity : ComponentActivity() {
                         vm = viewModel
                     )
 
-
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                     ) {
+                        Button(onClick = { }, modifier = Modifier
+                            .padding(4.dp)
+                            .align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(
+                                text = "Current Location",
+                                textAlign = TextAlign.Center
+                            )
+                        }
 
                         AddLocationCard(
                             modifier = Modifier
                                 .fillMaxWidth().height(200.dp)
-                                , // Increased minimum height
+                                ,
                             onSavedLocationsClick = { onSavedLocationsClick() },
                             onAddLocationClick = { showDialog = true },
                             onSettingsClick = { onSettingsClick() },
