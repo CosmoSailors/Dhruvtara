@@ -26,7 +26,10 @@ DhruvTara notifies you, rings an alarm, or automatically toggles **Do Not Distur
 - Build and run on an emulator or device.
 
 ## 📷 Screenshots
-(Will add screenshots/anything to show here)
+<img src="./screenshots/permReqdScreen.png" alt="Description" width="300" height="600"> <img src="./screenshots/permissionScreen.png" alt="Description" width="300" height="600">
+<img src="./screenshots/radiusLocationSelection.png" alt="Description" width="300" height="600"> <img src="./screenshots/multipleLocationList.png" alt="Description" width="300" height="600">
+<img src="./screenshots/locationWithDropDownInfo.png" alt="Description" width="300" height="600"> <img src="./screenshots/showAllLocations.png" alt="Description" width="300" height="600">
+
 
 ## 🏗️ Tech Stack
 
