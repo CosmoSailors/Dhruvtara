@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 
-
 @Composable
 fun AddLocationCard(
     modifier: Modifier = Modifier,
@@ -25,7 +24,7 @@ fun AddLocationCard(
     vm: MapsViewModel
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp), // Rounded corners for a smoother look
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = modifier
@@ -39,14 +38,12 @@ fun AddLocationCard(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔹 Radius Text
             Text(
                 text = "Adjust radius: ${(10 + (190 * sliderPosition)).toInt()}m",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // 🔹 Slider with better spacing
             Slider(
                 value = sliderPosition,
                 onValueChange = { onSliderChange(it) },
@@ -60,7 +57,6 @@ fun AddLocationCard(
                 )
             )
 
-            // 🔹 Action Buttons Row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,7 +64,6 @@ fun AddLocationCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Saved Locations Button
                 IconButton(onClick = onSavedLocationsClick) {
                     Icon(
                         imageVector = Icons.Filled.List,
@@ -77,7 +72,6 @@ fun AddLocationCard(
                     )
                 }
 
-                // Add Location Button (Stylish & Elevated)
                 Button(
                     onClick = onAddLocationClick,
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -97,7 +91,6 @@ fun AddLocationCard(
                     )
                 }
 
-                // Settings Button
                 SettingsIconButton(
                     showAllMarkersFlow = vm.showAllMarkersFlag,
                     onToggleShowAllMarkers = { vm.toggleShowAllMarkers(it) }
@@ -106,8 +99,3 @@ fun AddLocationCard(
         }
     }
 }
-
-
-
-
-

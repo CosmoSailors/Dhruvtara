@@ -3,7 +3,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.graphicsLayer
@@ -18,7 +17,6 @@ fun SettingsIconButton(
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        // 🔹 Stylish Settings Button
         IconButton(
             onClick = { expanded = true },
             modifier = Modifier.size(48.dp)
@@ -30,7 +28,6 @@ fun SettingsIconButton(
             )
         }
 
-        // 🔹 Styled Dropdown Menu
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -40,14 +37,14 @@ fun SettingsIconButton(
         ) {
             DropdownMenuItem(
                 text = { Text("Show All Locations", style = MaterialTheme.typography.bodyMedium) },
-                onClick = { expanded = false }, // Close dropdown when clicked
+                onClick = { expanded = false },
                 trailingIcon = {
                     Switch(
                         checked = showAllMarkers,
                         onCheckedChange = { isChecked ->
-                            onToggleShowAllMarkers(isChecked) // Update ViewModel
+                            onToggleShowAllMarkers(isChecked)
                         },
-                        modifier = Modifier.graphicsLayer(scaleX = 0.8f, scaleY = 0.8f) // Make switch smaller
+                        modifier = Modifier.graphicsLayer(scaleX = 0.8f, scaleY = 0.8f)
                     )
                 }
             )

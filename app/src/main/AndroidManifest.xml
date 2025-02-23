@@ -56,7 +56,8 @@
         </activity>
         <activity
             android:name=".presentation.ui.PermissionsManager"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Tangential">
         </activity>
 
         <meta-data
