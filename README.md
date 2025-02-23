@@ -1,6 +1,6 @@
 # 🌟 DhruvTara
 
-🚀 **DhruvTara** is a location-based event-triggering app that notifies, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
+🚀 **DhruvTara** is a location-based event-triggering app that notifies you, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
 
 ## 📌 Features
 
