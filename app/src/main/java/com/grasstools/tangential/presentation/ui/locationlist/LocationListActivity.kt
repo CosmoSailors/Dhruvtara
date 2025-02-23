@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,14 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.grasstools.tangential.DruvTaraApplication
-import com.grasstools.tangential.domain.model.LocationTriggers
 import com.grasstools.tangential.presentation.ui.locationlist.ui.theme.TangentialTheme
-import kotlinx.coroutines.launch
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.ui.text.font.FontWeight
+import com.grasstools.tangential.domain.model.Geofence
 
 data class LocationItem(val name: String, var isDndEnabled: Boolean)
 
@@ -60,21 +57,21 @@ class LocationListActivity : ComponentActivity() {
 
 @Composable
 fun LocationListScreen(vm: LocationViewModel) {
-    val locationsList by vm.getAllRecords().collectAsState(initial = emptyList())
-    var expandedLocationId by remember { mutableStateOf<String?>(null) }
+    val geofencesList by vm.getAllRecords().collectAsState(initial = emptyList())
+    var expandedGeofenceId by remember { mutableStateOf<String?>(null) }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        items(locationsList) { location ->
+        items(geofencesList) { geofence ->
             LocationRow(
-                location = location,
-                expandedLocationId = expandedLocationId,
-                onToggle = { vm.updateDndStatus(location) },
-                onDelete = { vm.deleteLocation(location) },
-                onExpand = { id -> expandedLocationId = if (expandedLocationId == id) null else id }
+                geofence = geofence,
+                expandedGeofenceId = expandedGeofenceId,
+                onToggle = { vm.toggleEnabled(geofence) },
+                onDelete = { vm.deleteGeofence(geofence) },
+                onExpand = { id -> expandedGeofenceId = if (expandedGeofenceId == id) null else id }
             )
         }
     }
@@ -82,13 +79,13 @@ fun LocationListScreen(vm: LocationViewModel) {
 
 @Composable
 fun LocationRow(
-    location: LocationTriggers,
-    expandedLocationId: String?,
+    geofence: Geofence,
+    expandedGeofenceId: String?,
     onToggle: () -> Unit,
     onDelete: () -> Unit,
     onExpand: (String) -> Unit
 ) {
-    val isExpanded = location.id.toString() == expandedLocationId
+    val isExpanded = geofence.id.toString() == expandedGeofenceId
     Card(
         shape = RoundedCornerShape(24.dp), // Sets the border radius
         modifier =  Modifier.fillMaxWidth()
@@ -107,17 +104,17 @@ fun LocationRow(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onExpand(location.id.toString()) },
+                    .clickable { onExpand(geofence.id.toString()) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = location.name,
+                    text = geofence.name,
                     fontSize = 24.sp,
                     modifier = Modifier.weight(1f),
                     fontWeight = FontWeight.Bold,
                 )
 
-                IconButton(onClick = { onExpand(location.id.toString()) }) {
+                IconButton(onClick = { onExpand(geofence.id.toString()) }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                         contentDescription = "Expand/Collapse",
@@ -128,7 +125,7 @@ fun LocationRow(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onExpand(location.id.toString()) },
+                    .clickable { onExpand(geofence.id.toString()) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -140,7 +137,7 @@ fun LocationRow(
 
 
                 Switch(
-                    checked = location.isDndEnabled,
+                    checked = geofence.enabled,
                     onCheckedChange = { onToggle() }
                 )
             }
@@ -153,17 +150,17 @@ fun LocationRow(
 
                 Column (Modifier.weight(1f)){
                     Text(
-                        text = "Latitude: ${location.latitude}",
+                        text = "Latitude: ${geofence.latitude}",
                         fontSize = 14.sp,
 
                     )
                     Text(
-                        text = "Longitude: ${location.longitude}",
+                        text = "Longitude: ${geofence.longitude}",
                         fontSize = 14.sp,
 
                     )
                     Text(
-                        text = "Radius: ${location.radius}",
+                        text = "Radius: ${geofence.radius}",
                         fontSize = 14.sp,
 
                         )

@@ -19,7 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.DruvTaraApplication
-import com.grasstools.tangential.domain.model.LocationTriggers
+import com.grasstools.tangential.domain.model.Geofence
+import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
@@ -110,12 +111,14 @@ class MapsActivity : ComponentActivity() {
     private fun insertTrigger(nickname: String) {
         viewModel.viewModelScope.launch {
             viewModel.insertLocationTrigger(
-                LocationTriggers(
+                Geofence(
                     name = nickname,
                     latitude = viewModel.latitude,
                     longitude = viewModel.longitude,
-                    isDndEnabled = false,
-                    radius = viewModel.radius.toDouble()
+                    radius = viewModel.radius,
+                    type = GeofenceType.DND,
+                    config = "",
+                    enabled = true
                 )
             )
         }

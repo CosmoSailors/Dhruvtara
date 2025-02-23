@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.grasstools.tangential.domain.model.LocationTriggers
+import com.grasstools.tangential.domain.model.Geofence
 
-@Database(entities = [LocationTriggers::class], version = 1)
+@Database(entities = [Geofence::class], version = 1)
 abstract class TangentialDatabase: RoomDatabase() {
-    abstract fun dao(): LocationDao
+    abstract fun dao(): GeofenceDao
 
     companion object {
         @Volatile

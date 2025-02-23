@@ -11,6 +11,8 @@ import androidx.core.app.ServiceCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.domain.model.Geofence
+import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.triggerables.*
 import java.util.Timer
 import java.util.TimerTask
@@ -47,12 +49,13 @@ class GeofenceManager : Service() {
     private var timer: Timer? = null
     private val taggedGeofences = mutableListOf<TaggedGeofence>(
         TaggedGeofence(false, Geofence(
-            "Yo mama is here",
-            37.40948,
-            -121.49235,
-            500.0f,
-            GeofenceType.DND,
-            "null"
+            name = "Yo mama is here",
+            latitude = 37.40948,
+            longitude = -121.49235,
+            radius = 500.0f,
+            type = GeofenceType.DND,
+            config = "null",
+            enabled = true
         )
     ))
 
