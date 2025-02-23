@@ -1,3 +1,12 @@
+## ⁉️ Problem Statement
+There are situations where users need to schedule tasks based on their location. For example:
+Automatically enabling "Do Not Disturb" (DND) mode when arriving at a specific location and disabling it upon departure.
+Sending a notification to a friend when approaching a designated place, such as a bus stop.
+However, managing these tasks manually can be inconvenient and prone to human error, such as forgetting to disable DND after leaving a location.
+
+## 💡 Proposed Solution
+We propose developing an Android application that allows users to schedule tasks and triggers based on their real-time location. The app will utilize a foreground service (Android Foreground Services) to periodically check the user's location and execute predefined actions accordingly.
+
 # 🌟 DhruvTara
 
 **DhruvTara** is a location-based event-triggering app that notifies you, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
