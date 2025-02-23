@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.grasstools.tangential.domain.model.GeofenceType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +41,9 @@ class MapsViewModel(
         private set
 
     var radius by mutableStateOf(10.0f)
+        private set
+
+    var type = MutableStateFlow(GeofenceType.DND)
         private set
 
     private val _showAllMarkersFlag = MutableStateFlow(false)
@@ -74,6 +78,10 @@ class MapsViewModel(
     fun updateSliderPosition(value: Float) {
         sliderPosition = value
         updateRadius(10 + (190 * value))
+    }
+
+    fun updateType(value: GeofenceType) {
+        type.value = value
     }
 
     suspend fun insertLocationTrigger(geofence: Geofence) {

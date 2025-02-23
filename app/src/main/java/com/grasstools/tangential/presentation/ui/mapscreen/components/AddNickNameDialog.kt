@@ -15,6 +15,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 
 @Composable
 fun AddNickNameDialog(
@@ -22,7 +24,8 @@ fun AddNickNameDialog(
     onLocationAdded: (String) -> Unit,
     latitude: Double,
     longitude: Double,
-    radius: Float
+    radius: Float,
+    vm: MapsViewModel
 ) {
     var nickname by remember { mutableStateOf("") }
 
@@ -42,7 +45,9 @@ fun AddNickNameDialog(
                     latitude = latitude,
                     longitude = longitude,
                     radius = radius,
-                    onNicknameChange = { nickname = it })
+                    onNicknameChange = { nickname = it },
+                    vm = vm
+                )
             }
         }
     }
@@ -78,11 +83,16 @@ private fun DialogContent(
     onNicknameChange: (String) -> Unit,
     latitude: Double,
     longitude: Double,
-    radius: Float
+    radius: Float,
+    vm: MapsViewModel
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedType by remember { mutableStateOf("Select Type") }
     val locationTypes = listOf("DND", "Alarm")
+
+    val type by vm.type.collectAsState()
+
+
 
     Column(
         modifier = Modifier
@@ -113,7 +123,7 @@ private fun DialogContent(
             onExpandedChange = { expanded = it }
         ) {
             OutlinedTextField(
-                value = selectedType,
+                value = type.toString(), // Observing ViewModel state
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Type") },
@@ -131,17 +141,18 @@ private fun DialogContent(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                locationTypes.forEach { type ->
+                locationTypes.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(type) },
+                        text = { Text(item) },
                         onClick = {
-                            selectedType = type
+                            vm.updateType(GeofenceType.valueOf(item)) // ✅ Update ViewModel
                             expanded = false
                         }
                     )
                 }
             }
         }
+
 
         Text(
             text = "Save As",

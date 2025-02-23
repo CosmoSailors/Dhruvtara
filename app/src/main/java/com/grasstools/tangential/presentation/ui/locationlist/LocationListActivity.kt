@@ -129,7 +129,7 @@ fun LocationRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Toggle Alert",
+                    text = geofence.type.toString(),
                     fontSize = 16.sp,
                     modifier = Modifier.weight(1f),
 

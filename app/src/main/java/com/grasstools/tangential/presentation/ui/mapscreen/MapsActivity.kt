@@ -26,6 +26,7 @@ import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivi
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
 import kotlinx.coroutines.launch
+import kotlin.reflect.typeOf
 
 class MapsActivity : ComponentActivity() {
 
@@ -50,6 +51,9 @@ class MapsActivity : ComponentActivity() {
         var showDialog by remember { mutableStateOf(false) }
         val latitude by viewModel.latitude.collectAsState()
         val longitude by viewModel.longitude.collectAsState()
+
+        val type by viewModel.type.collectAsState()
+
         TangentialTheme {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -96,20 +100,24 @@ class MapsActivity : ComponentActivity() {
                         AddNickNameDialog(
                             onDismissRequest = { showDialog = false },
                             onLocationAdded = { nickname ->
-                                insertTrigger(nickname)
+                                insertTrigger(
+                                    nickname,
+                                    type = viewModel.type.value
+                                )
                                 showDialog = false
                                 navigateToLocationListActivity()
                             },
                             latitude = latitude,
                             longitude = longitude,
-                            radius = viewModel.radius
+                            radius = viewModel.radius,
+                            vm = viewModel
                         )
                     }
                 }
             }
         }
     }
-    private fun insertTrigger(nickname: String) {
+    private fun insertTrigger(nickname: String, type: GeofenceType) {
         viewModel.viewModelScope.launch {
             viewModel.insertLocationTrigger(
                 Geofence(
@@ -117,7 +125,7 @@ class MapsActivity : ComponentActivity() {
                     latitude = viewModel.latitude.value,
                     longitude = viewModel.longitude.value,
                     radius = viewModel.radius,
-                    type = GeofenceType.DND,
+                    type = type,
                     config = "",
                     enabled = true
                 )
