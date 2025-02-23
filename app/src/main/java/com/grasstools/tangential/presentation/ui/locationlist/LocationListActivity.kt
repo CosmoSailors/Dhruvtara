@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.App
 import com.grasstools.tangential.presentation.ui.locationlist.ui.theme.TangentialTheme
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -32,7 +32,7 @@ import com.grasstools.tangential.domain.model.Geofence
 data class LocationItem(val name: String, var isDndEnabled: Boolean)
 
 class LocationListActivity : ComponentActivity() {
-    private val database by lazy { (application as DruvTaraApplication).database }
+    private val database by lazy { (application as App).database }
 
     private val viewModel by viewModels<LocationViewModel>(
         factoryProducer = {

@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.ui.theme.TangentialTheme
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 
 class MapsActivity : ComponentActivity() {
 
-    private val database by lazy { (application as DruvTaraApplication).database }
+    private val database by lazy { (application as App).database }
     private val viewModel by viewModels<MapsViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

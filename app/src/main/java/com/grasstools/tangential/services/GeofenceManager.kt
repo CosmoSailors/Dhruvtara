@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.triggerables.*
@@ -104,7 +104,7 @@ class GeofenceManager : Service() {
     }
 
     private val locationProvider = LocationServices.getFusedLocationProviderClient(
-        DruvTaraApplication.getContext()!!)
+        App.getContext()!!)
 
     data class TaggedGeofence(
         var tag: Boolean,
