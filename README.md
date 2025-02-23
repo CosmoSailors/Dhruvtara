@@ -1,13 +1,11 @@
 # 🌟 DhruvTara
 
-🚀 **DhruvTara** is a location-based event-triggering app that notifies you, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
+**DhruvTara** is a location-based event-triggering app that notifies you, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
 
 ## 📌 Features
 
 - 📍 **Location-Based Alarms** - Get notified when you arrive at your destination.
-- 🔔 **Full-Screen Alarm** - A prominent alert with vibration and sound.
 - 🎛️ **Do Not Disturb (DND) Mode** - Enable/disable DND for specific locations.
-- 📌 **Current Location Selection** - Easily select your current location.
 - 🗑️ **Manage Locations** - Add, toggle, and remove locations effortlessly.
 
 ## 🛠️ Installation
@@ -23,9 +21,8 @@
 
 ## 🏗️ Tech Stack
 
-- 🏗️ Kotlin & Jetpack Compose - Modern UI development.
-- 📍 Google Location Services - Accurate location tracking.
-- 🔔 Foreground Service - Ensures alarms work in the background.
+- 🏗️ Kotlin & Jetpack Compose
+- 📍 [Google Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk)
 
 ## 🚀 Usage
 
