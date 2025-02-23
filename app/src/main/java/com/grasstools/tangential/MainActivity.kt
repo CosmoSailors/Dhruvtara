@@ -32,11 +32,12 @@ class MainActivity : ComponentActivity() {
             geofenceManager = binder.getService()
             geofenceManagerBound = true
 
-            if (geofenceManager.isInit) {
+            if (!geofenceManager.isInit) {
                 CoroutineScope(Dispatchers.IO).launch {
                     for (geofence in database.dao().getAllGeofencesSnapshot()) {
                         geofenceManager.register(geofence)
                     }
+                    geofenceManager.isInit = true
                 }
             } else {
                 Log.i("LOL", "Already init")
