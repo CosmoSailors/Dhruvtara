@@ -15,35 +15,42 @@ fun SettingsIconButton(
     onToggleShowAllMarkers: (Boolean) -> Unit
 ) {
     val showAllMarkers by showAllMarkersFlow.collectAsState()
-
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Filled.Settings, contentDescription = "Settings")
+        // 🔹 Stylish Settings Button
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = "Settings",
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
 
+        // 🔹 Styled Dropdown Menu
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.width(180.dp)
+            modifier = Modifier
+                .width(220.dp)
+                .padding(4.dp)
         ) {
             DropdownMenuItem(
-                text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Show All Locations", modifier = Modifier.weight(1f))
-                        Switch(
-                            checked = showAllMarkers,
-                            onCheckedChange = { isChecked ->
-                                onToggleShowAllMarkers(isChecked) // Update ViewModel
-                            },
-                            modifier = Modifier.graphicsLayer(scaleX = 0.7f, scaleY = 0.7f)
-                        )
-                    }
-                },
-                onClick = { }
+                text = { Text("Show All Locations", style = MaterialTheme.typography.bodyMedium) },
+                onClick = { expanded = false }, // Close dropdown when clicked
+                trailingIcon = {
+                    Switch(
+                        checked = showAllMarkers,
+                        onCheckedChange = { isChecked ->
+                            onToggleShowAllMarkers(isChecked) // Update ViewModel
+                        },
+                        modifier = Modifier.graphicsLayer(scaleX = 0.8f, scaleY = 0.8f) // Make switch smaller
+                    )
+                }
             )
-
         }
     }
 }
