@@ -1,30 +1,25 @@
 package com.grasstools.tangential.presentation.ui.mapscreen
 
 import android.annotation.SuppressLint
-import com.grasstools.tangential.data.db.GeofenceDao
-import com.grasstools.tangential.domain.model.Geofence
-
 import android.content.Context
 import android.util.Log
 import android.Manifest
 import android.content.pm.PackageManager
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.maps.model.LatLng
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
+import com.grasstools.tangential.data.db.GeofenceDao
+import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
 
 class MapsViewModel(
     private val dao: GeofenceDao,
@@ -34,23 +29,26 @@ class MapsViewModel(
     var sliderPosition by mutableFloatStateOf(0f)
         private set
 
-    var latitude = MutableStateFlow(0.0)
+    private val _latitude = MutableStateFlow(0.0)
+    val latitude: StateFlow<Double> = _latitude.asStateFlow()
+
+    private val _longitude = MutableStateFlow(0.0)
+    val longitude: StateFlow<Double> = _longitude.asStateFlow()
+
+    var radius by mutableFloatStateOf(10.0f)
         private set
 
-    var longitude = MutableStateFlow(0.0)
-        private set
-
-    var radius by mutableStateOf(10.0f)
-        private set
-
-    var type = MutableStateFlow(GeofenceType.DND)
-        private set
+    private val _type = MutableStateFlow(GeofenceType.DND)
+    val type: StateFlow<GeofenceType> = _type.asStateFlow()
 
     private val _showAllMarkersFlag = MutableStateFlow(false)
     val showAllMarkersFlag: StateFlow<Boolean> = _showAllMarkersFlag.asStateFlow()
 
     private val _allGeofences = MutableStateFlow<List<Geofence>>(emptyList())
     val allGeofences: StateFlow<List<Geofence>> = _allGeofences.asStateFlow()
+
+    private val _shouldRecenterMap = MutableStateFlow(false)
+    val shouldRecenterMap: StateFlow<Boolean> = _shouldRecenterMap.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -64,15 +62,14 @@ class MapsViewModel(
         _showAllMarkersFlag.value = value
     }
 
-
     fun updateRadius(value: Float) {
         radius = value
     }
 
     fun updateLatLong(value: LatLng) {
-        latitude.value = value.latitude
-        longitude.value = value.longitude
-        Log.i("MapsViewModel", "updateLatLong: $latitude, $longitude")
+        _latitude.value = value.latitude
+        _longitude.value = value.longitude
+        Log.i("MapsViewModel", "updateLatLong: ${_latitude.value}, ${_longitude.value}")
     }
 
     fun updateSliderPosition(value: Float) {
@@ -81,7 +78,7 @@ class MapsViewModel(
     }
 
     fun updateType(value: GeofenceType) {
-        type.value = value
+        _type.value = value
     }
 
     suspend fun insertLocationTrigger(geofence: Geofence) {
@@ -90,9 +87,15 @@ class MapsViewModel(
     }
 
     suspend fun loadAllGeofences() {
-        dao.getAllGeofences().collect { geofences ->
-            _allGeofences.value = geofences
+        viewModelScope.launch {
+            dao.getAllGeofences().collect { geofences ->
+                _allGeofences.value = geofences
+            }
         }
+    }
+
+    fun setShouldRecenterMap(value: Boolean) {
+        _shouldRecenterMap.value = value
     }
 
     @SuppressLint("MissingPermission")
@@ -107,11 +110,11 @@ class MapsViewModel(
 
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
-                    latitude.value = location.latitude
-                    longitude.value = location.longitude
+                    _latitude.value = location.latitude
+                    _longitude.value = location.longitude
+                    setShouldRecenterMap(true)
                 }
             }
         }
     }
-
 }

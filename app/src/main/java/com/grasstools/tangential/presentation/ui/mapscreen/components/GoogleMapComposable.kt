@@ -13,7 +13,6 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 
-@SuppressLint("MissingPermission")
 @Composable
 fun GoogleMapComposable(
     modifier: Modifier = Modifier,
@@ -34,6 +33,8 @@ fun GoogleMapComposable(
 
     val latitude by vm.latitude.collectAsState()
     val longitude by vm.longitude.collectAsState()
+    val shouldRecenterMap by vm.shouldRecenterMap.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = {
@@ -54,8 +55,6 @@ fun GoogleMapComposable(
                                 .strokeColor(0x550000FF)
                                 .fillColor(0x220000FF)
                         )
-
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 12f))
 
                         googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
                             override fun onMarkerDragStart(marker: Marker) {}
@@ -78,28 +77,15 @@ fun GoogleMapComposable(
         )
     }
 
-    LaunchedEffect(Unit) {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                location?.let {
-                    val newLatLng = LatLng(it.latitude, it.longitude)
-                    markerPosition = newLatLng
-                    onLatLongChange(newLatLng)
-
-                    map?.let { googleMap ->
-                        marker?.position = newLatLng
-                        circle?.center = newLatLng
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12f))
-                    }
-                }
-            }
-    }
-
     LaunchedEffect(latitude, longitude) {
         val newLatLng = LatLng(latitude, longitude)
         marker?.position = newLatLng
         circle?.center = newLatLng
-        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12f))
+
+        if (shouldRecenterMap) {
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12.0f))
+            vm.setShouldRecenterMap(false)  // Reset the flag after zooming
+        }
     }
 
     LaunchedEffect(showAllMarkers) {
@@ -150,5 +136,6 @@ fun GoogleMapComposable(
         }
     }
 }
+
 
 
