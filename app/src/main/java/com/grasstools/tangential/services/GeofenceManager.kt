@@ -1,19 +1,28 @@
 package com.grasstools.tangential.services
 
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.location.Location
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.repository.GeofenceRepository
 import com.grasstools.tangential.triggerables.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
 
@@ -26,6 +35,18 @@ class GeofenceManager : Service() {
     fun register(geofences: List<Geofence>) {
         for (geofence in geofences) {
             register(geofence)
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        val intentFilter = IntentFilter()
+        ContextCompat.registerReceiver(this, myBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED)
+    }
+
+    val myBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.i("LOL", "Hey it worked")
         }
     }
 
@@ -43,6 +64,7 @@ class GeofenceManager : Service() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel() // Always cancel your timer to prevent leaks.
+        this.unregisterReceiver(myBroadcastReceiver)
     }
 
     private val POLL_RATE: Long = 5*1000
