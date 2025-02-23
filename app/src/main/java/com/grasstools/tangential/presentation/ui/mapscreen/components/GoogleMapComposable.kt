@@ -32,6 +32,8 @@ fun GoogleMapComposable(
     val showAllMarkers by vm.showAllMarkersFlag.collectAsState()
     val allLocations by vm.allGeofences.collectAsState()
 
+    val latitude by vm.latitude.collectAsState()
+    val longitude by vm.longitude.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = {
@@ -91,6 +93,13 @@ fun GoogleMapComposable(
                     }
                 }
             }
+    }
+
+    LaunchedEffect(latitude, longitude) {
+        val newLatLng = LatLng(latitude, longitude)
+        marker?.position = newLatLng
+        circle?.center = newLatLng
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12f))
     }
 
     LaunchedEffect(showAllMarkers) {
