@@ -27,7 +27,7 @@ class AlarmScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.mustard)
+        mediaPlayer = MediaPlayer.create(this, R.raw.ringtone2)
         mediaPlayer?.isLooping = true
         mediaPlayer?.start()
 
