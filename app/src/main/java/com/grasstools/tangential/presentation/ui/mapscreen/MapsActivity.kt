@@ -47,7 +47,8 @@ class MapsActivity : ComponentActivity() {
     @Composable
     private fun MapsScreen() {
         var showDialog by remember { mutableStateOf(false) }
-
+        val latitude by viewModel.latitude.collectAsState()
+        val longitude by viewModel.longitude.collectAsState()
         TangentialTheme {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -55,7 +56,7 @@ class MapsActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         sliderPosition = viewModel.sliderPosition,
                         onLatLongChange = { viewModel.updateLatLong(it) }
-                        , latLng = LatLng( viewModel.latitude, viewModel.longitude ),
+                        , latLng = LatLng( latitude, longitude ),
                         vm = viewModel
                     )
 
@@ -64,9 +65,10 @@ class MapsActivity : ComponentActivity() {
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                     ) {
-                        Button(onClick = { }, modifier = Modifier
+                        Button(onClick = { viewModel.getCurrentLocation() }, modifier = Modifier
                             .padding(4.dp)
                             .align(Alignment.CenterHorizontally)
+
                         ) {
                             Text(
                                 text = "Current Location",
@@ -98,8 +100,8 @@ class MapsActivity : ComponentActivity() {
                                 showDialog = false
                                 navigateToLocationListActivity()
                             },
-                            latitude = viewModel.latitude,
-                            longitude = viewModel.longitude,
+                            latitude = latitude,
+                            longitude = latitude,
                             radius = viewModel.radius
                         )
                     }
@@ -112,8 +114,8 @@ class MapsActivity : ComponentActivity() {
             viewModel.insertLocationTrigger(
                 LocationTriggers(
                     name = nickname,
-                    latitude = viewModel.latitude,
-                    longitude = viewModel.longitude,
+                    latitude = viewModel.latitude.value,
+                    longitude = viewModel.longitude.value,
                     isDndEnabled = false,
                     radius = viewModel.radius.toDouble()
                 )

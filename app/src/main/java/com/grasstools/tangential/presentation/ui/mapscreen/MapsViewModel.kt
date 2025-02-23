@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
+import android.Manifest
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,12 +12,14 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import com.grasstools.tangential.data.db.LocationDao
 import com.grasstools.tangential.domain.model.LocationTriggers
-import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -30,10 +33,10 @@ class MapsViewModel(
     var sliderPosition by mutableFloatStateOf(0f)
         private set
 
-    var latitude by mutableStateOf(0.0)
+    var latitude = MutableStateFlow(0.0)
         private set
 
-    var longitude by mutableStateOf(0.0)
+    var longitude = MutableStateFlow(0.0)
         private set
 
     var radius by mutableStateOf(10.0f)
@@ -63,8 +66,8 @@ class MapsViewModel(
     }
 
     fun updateLatLong(value: LatLng) {
-        latitude = value.latitude
-        longitude = value.longitude
+        latitude.value = value.latitude
+        longitude.value = value.longitude
         Log.i("MapsViewModel", "updateLatLong: $latitude, $longitude")
     }
 
@@ -81,6 +84,25 @@ class MapsViewModel(
     suspend fun loadAllLocations() {
         dao.getAllLocations().collect { locations ->
             _allLocations.value = locations
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val fusedLocationClient: FusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(context)
+
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    latitude.value = location.latitude
+                    longitude.value = location.longitude
+                }
+            }
         }
     }
 
