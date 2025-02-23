@@ -1,8 +1,12 @@
 package com.grasstools.tangential.presentation.ui.mapscreen
 
 import AddNickNameDialog
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,11 +30,15 @@ import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
+import com.grasstools.tangential.services.GeofenceManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.reflect.typeOf
 
 class MapsActivity : ComponentActivity() {
-
+    private lateinit var geofenceManager: GeofenceManager
+    private var geofenceManagerBound: Boolean = false
     private val database by lazy { (application as App).database }
     private val viewModel by viewModels<MapsViewModel> {
         object : ViewModelProvider.Factory {
@@ -40,11 +48,40 @@ class MapsActivity : ComponentActivity() {
         }
     }
 
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as GeofenceManager.LocalBinder
+            geofenceManager = binder.getService()
+            geofenceManagerBound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            geofenceManagerBound = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MapsScreen()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, GeofenceManager::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+    }
+
+    private fun resync() {
+        geofenceManager.clear()
+        geofenceManager.register(database.dao().getAllGeofencesSnapshot())
     }
 
     @Composable
@@ -107,6 +144,9 @@ class MapsActivity : ComponentActivity() {
                                     nickname,
                                     type = viewModel.type.value
                                 )
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    resync()
+                                }
                                 showDialog = false
                                 navigateToLocationListActivity()
                             },
@@ -134,6 +174,7 @@ class MapsActivity : ComponentActivity() {
                 )
             )
         }
+
     }
 
     private fun navigateToLocationListActivity() {

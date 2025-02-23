@@ -1,9 +1,7 @@
 package com.grasstools.tangential.presentation.ui.locationlist
 
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.grasstools.tangential.App
 import com.grasstools.tangential.data.db.GeofenceDao
 import com.grasstools.tangential.domain.model.Geofence
 import kotlinx.coroutines.flow.Flow
@@ -17,14 +15,12 @@ class LocationViewModel(
         viewModelScope.launch {
             dao.updateGeofenceEnabled(geofence.id, !geofence.enabled)
         }
-        App.getContext()?.sendBroadcast(Intent("GEOFENCE_CHANGE"))
     }
 
     fun deleteGeofence(geofence: Geofence) {
         viewModelScope.launch {
             dao.deleteGeofenceById(geofence.id)
         }
-        App.getContext()?.sendBroadcast(Intent("GEOFENCE_CHANGE"))
     }
 
     fun getAllRecords(): Flow<List<Geofence>> {

@@ -4,12 +4,12 @@ Automatically enabling "Do Not Disturb" (DND) mode when arriving at a specific l
 Sending a notification to a friend when approaching a designated place, such as a bus stop.
 However, managing these tasks manually can be inconvenient and prone to human error, such as forgetting to disable DND after leaving a location.
 
-## 💡 Proposed Solution
-We propose developing an Android application that allows users to schedule tasks and triggers based on their real-time location. The app will utilize a foreground service (Android Foreground Services) to periodically check the user's location and execute predefined actions accordingly.
+# 🌟 **DhruvTara** 
+A Location-Based Event Triggering App.
+We propose developing **DhruvTara**, an Android application that enables users to schedule tasks and triggers based on their real-time location. The app will utilize **Android Foreground Services** to periodically check the user's location and execute predefined actions accordingly.  
 
-# 🌟 DhruvTara
-
-**DhruvTara** is a location-based event-triggering app that notifies you, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
+## 🚀 **How It Works**  
+DhruvTara notifies you, rings an alarm, or automatically toggles **Do Not Disturb (DND) mode** when you reach a predefined location. Never worry about missing an important place or forgetting to turn DND on/off when entering or exiting locations like libraries, offices, or quiet zones!  
 
 ## 📌 Features
 
@@ -26,7 +26,10 @@ We propose developing an Android application that allows users to schedule tasks
 - Build and run on an emulator or device.
 
 ## 📷 Screenshots
-(Will add screenshots/anything to show here)
+<img src="./screenshots/permReqdScreen.png" alt="Description" width="250" height="530"> <img src="./screenshots/permissionScreen.png" alt="Description" width="250" height="530">
+<img src="./screenshots/radiusLocationSelection.png" alt="Description" width="250" height="530"> <img src="./screenshots/multipleLocationList.png" alt="Description" width="250" height="530">
+<img src="./screenshots/locationWithDropDownInfo.png" alt="Description" width="250" height="530"> <img src="./screenshots/showAllLocations.png" alt="Description" width="250" height="530">
+
 
 ## 🏗️ Tech Stack
 
