@@ -1,49 +1,26 @@
 package com.grasstools.tangential
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.LocationServices
-import com.grasstools.tangential.data.db.TangentialDatabase
-import com.grasstools.tangential.presentation.ui.mapscreen.MapsActivity
+import com.grasstools.tangential.presentation.ui.PermissionsManager
 import com.grasstools.tangential.services.GeofenceManager
-import com.grasstools.tangential.ui.theme.TangentialTheme
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.room.Room
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashscreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        checkAndRequestPermissions()
-
+        // splash screen
+        val splashscreen = installSplashScreen()
         var keepSplashScreen = true
         splashscreen.setKeepOnScreenCondition { keepSplashScreen }
         lifecycleScope.launch {
@@ -51,7 +28,7 @@ class MainActivity : ComponentActivity() {
             keepSplashScreen = false
         }
 
-        // create a notification channel
+        // create a notification channel, TODO: put this elsewhere?
         val notifChannel = NotificationChannel(
             "SERVICE_CHAN",
             getString(R.string.notif_channel_name),
@@ -60,46 +37,16 @@ class MainActivity : ComponentActivity() {
         notifChannel.description = getString(R.string.notif_channel_desc)
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notifChannel)
-        if (!notificationManager.isNotificationPolicyAccessGranted) {
-            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-            startActivity(intent)
-        }
+
+        navigateToNextActivity()
 
         // launch service
         val intent = Intent(this, GeofenceManager::class.java)
         this.startForegroundService(intent)
     }
 
-    private val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.all { it.value }) {
-            navigateToNextActivity()
-        } else {
-            // TODO: Handle permission denial (e.g., show a message)
-        }
-    }
-
-    private fun checkAndRequestPermissions() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                navigateToNextActivity()
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                // Show rationale if needed
-                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-            }
-            else -> {
-                locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-            }
-        }
-    }
-
     private fun navigateToNextActivity() {
-        val intent = Intent(this, MapsActivity::class.java) // Replace NextActivity
+        val intent = Intent(this, PermissionsManager::class.java) // Replace NextActivity
         startActivity(intent)
     }
 }
