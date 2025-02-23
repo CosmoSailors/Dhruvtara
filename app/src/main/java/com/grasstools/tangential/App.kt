@@ -5,11 +5,11 @@ import android.content.Context
 import androidx.room.Room
 import com.grasstools.tangential.data.db.TangentialDatabase
 
-class DruvTaraApplication: Application() {
+class App: Application() {
     companion object {
-        private var applicationInstance: DruvTaraApplication? = null
+        private var applicationInstance: App? = null
 
-        fun getInstance(): DruvTaraApplication? {
+        fun getInstance(): App? {
             return applicationInstance
         }
 

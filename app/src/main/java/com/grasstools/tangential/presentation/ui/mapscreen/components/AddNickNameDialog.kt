@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.grasstools.tangential.presentation.ui.mainscreen.viewmodel
 
 @Composable
 fun AddNickNameDialog(

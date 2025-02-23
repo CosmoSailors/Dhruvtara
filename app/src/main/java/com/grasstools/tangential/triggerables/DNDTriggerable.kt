@@ -3,18 +3,18 @@ package com.grasstools.tangential.triggerables
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import com.grasstools.tangential.DruvTaraApplication
+import com.grasstools.tangential.App
 
 object DNDTrigerable: Triggerable {
     override fun onEntry(config: String) {
-        val context = DruvTaraApplication.getContext()
+        val context = App.getContext()
         if (context != null) {
             setDoNotDisturb(context)
         }
     }
 
     override fun onExit(config: String) {
-        val context = DruvTaraApplication.getContext()
+        val context = App.getContext()
         if (context != null) {
             clearDoNotDisturb(context)
         }

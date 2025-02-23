@@ -30,7 +30,7 @@ fun GoogleMapComposable(
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
     val showAllMarkers by vm.showAllMarkersFlag.collectAsState()
-    val allLocations by vm.allLocations.collectAsState()
+    val allLocations by vm.allGeofences.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -101,7 +101,7 @@ fun GoogleMapComposable(
 
                     allLocations.forEach { location ->
                         val position = LatLng(location.latitude, location.longitude)
-                        val markerColor = if (location.isDndEnabled) {
+                        val markerColor = if (location.enabled) {
                             BitmapDescriptorFactory.HUE_GREEN
                         } else {
                             BitmapDescriptorFactory.HUE_BLUE

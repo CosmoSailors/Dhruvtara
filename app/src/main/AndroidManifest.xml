@@ -9,9 +9,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".DruvTaraApplication"
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -48,11 +49,6 @@
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".presentation.ui.mainscreen.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Tangential" />
-        <activity
             android:name=".presentation.ui.locationlist.LocationListActivity"
             android:exported="false"
             android:label="@string/title_activity_location_list"
@@ -69,7 +65,6 @@
             android:theme="@style/Theme.Tangential">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
