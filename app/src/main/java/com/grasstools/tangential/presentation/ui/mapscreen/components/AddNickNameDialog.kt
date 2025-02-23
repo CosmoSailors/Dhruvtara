@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -64,13 +65,14 @@ private fun DialogHeader(
         IconButton(onClick = onDismissRequest) {
             Icon(Icons.Filled.Close, contentDescription = "Close")
         }
-        Text(text = "Location Details", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Trigger Details", style = MaterialTheme.typography.titleMedium)
         TextButton(onClick = { onLocationAdded(nickname) }) {
             Text("Save")
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DialogContent(
     nickname: String,
@@ -79,6 +81,10 @@ private fun DialogContent(
     longitude: Double,
     radius: Float
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedType by remember { mutableStateOf("Select Type") }
+    val locationTypes = listOf("DND", "Alarm")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,21 +92,11 @@ private fun DialogContent(
     ) {
         Row {
             Column(Modifier.weight(1f)) {
-                Text(text = "Latitude: ${latitude}", style = MaterialTheme.typography.titleMedium)
-
-                Text(
-                    text = "Longitude: ${longitude}",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
+                Text(text = "Latitude: $latitude", style = MaterialTheme.typography.titleMedium)
+                Text(text = "Longitude: $longitude", style = MaterialTheme.typography.titleMedium)
             }
-
         }
-        Text(text = "Radius: ${radius}m ", style = MaterialTheme.typography.titleMedium)
-
-
-
-
+        Text(text = "Radius: ${radius}m", style = MaterialTheme.typography.titleMedium)
 
         OutlinedTextField(
             value = nickname,
@@ -112,6 +108,42 @@ private fun DialogContent(
                 .padding(vertical = 8.dp)
         )
 
+        // 🔹 Dropdown menu for selecting location type
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            OutlinedTextField(
+                value = selectedType,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Type") },
+                trailingIcon = {
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(Icons.Filled.ArrowDropDown, contentDescription = "Dropdown")
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                locationTypes.forEach { type ->
+                    DropdownMenuItem(
+                        text = { Text(type) },
+                        onClick = {
+                            selectedType = type
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+
         Text(
             text = "Save As",
             style = MaterialTheme.typography.titleMedium,
@@ -120,6 +152,7 @@ private fun DialogContent(
         SaveAsChips()
     }
 }
+
 
 @Composable
 private fun SaveAsChips() {
