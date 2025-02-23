@@ -3,7 +3,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.graphicsLayer
@@ -15,35 +14,40 @@ fun SettingsIconButton(
     onToggleShowAllMarkers: (Boolean) -> Unit
 ) {
     val showAllMarkers by showAllMarkersFlow.collectAsState()
-
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Filled.Settings, contentDescription = "Settings")
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = "Settings",
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.width(180.dp)
+            modifier = Modifier
+                .width(220.dp)
+                .padding(4.dp)
         ) {
             DropdownMenuItem(
-                text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Show All Locations", modifier = Modifier.weight(1f))
-                        Switch(
-                            checked = showAllMarkers,
-                            onCheckedChange = { isChecked ->
-                                onToggleShowAllMarkers(isChecked) // Update ViewModel
-                            },
-                            modifier = Modifier.graphicsLayer(scaleX = 0.7f, scaleY = 0.7f)
-                        )
-                    }
-                },
-                onClick = { }
+                text = { Text("Show All Locations", style = MaterialTheme.typography.bodyMedium) },
+                onClick = { expanded = false },
+                trailingIcon = {
+                    Switch(
+                        checked = showAllMarkers,
+                        onCheckedChange = { isChecked ->
+                            onToggleShowAllMarkers(isChecked)
+                        },
+                        modifier = Modifier.graphicsLayer(scaleX = 0.8f, scaleY = 0.8f)
+                    )
+                }
             )
-
         }
     }
 }

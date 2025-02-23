@@ -2,20 +2,16 @@ package com.grasstools.tangential.presentation.ui.mapscreen.components
 
 import SettingsIconButton
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
-
 
 @Composable
 fun AddLocationCard(
@@ -25,53 +21,74 @@ fun AddLocationCard(
     onSettingsClick: () -> Unit,
     sliderPosition: Float,
     onSliderChange: (Float) -> Unit,
-vm: MapsViewModel
+    vm: MapsViewModel
 ) {
-
     Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp)
-            .padding(4.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+                .padding(20.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Text(text = "Adjust radius: ${10 + (190*sliderPosition)}m", modifier = Modifier.padding(bottom = 4.dp)) // Text above Slider
+            Text(
+                text = "Adjust radius: ${(10 + (190 * sliderPosition)).toInt()}m",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
             Slider(
                 value = sliderPosition,
-                onValueChange = {onSliderChange(it)},
+                onValueChange = { onSliderChange(it) },
                 modifier = Modifier
-                    .padding(32.dp, 0.dp, 32.dp, 32.dp)
                     .fillMaxWidth()
-                    .height(16.dp)
+                    .padding(horizontal = 24.dp),
+                colors = SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.primary,
+                    activeTrackColor = MaterialTheme.colorScheme.primary,
+                    inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                )
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(start = 32.dp, end = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onSavedLocationsClick) {
-                    Icon(Icons.Filled.List, contentDescription = "Saved Locations")
+                    Icon(
+                        imageVector = Icons.Filled.List,
+                        contentDescription = "Saved Locations",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
 
-                TextButton(
-                    onClick =  onAddLocationClick ,
-                    modifier = Modifier.padding(8.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    )
+                Button(
+                    onClick = onAddLocationClick,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
-                    Icon(Icons.Filled.Add, "Add location button", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add Location",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Add Location", color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        text = "Add Location",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
 
                 SettingsIconButton(
@@ -82,7 +99,3 @@ vm: MapsViewModel
         }
     }
 }
-
-
-
-
