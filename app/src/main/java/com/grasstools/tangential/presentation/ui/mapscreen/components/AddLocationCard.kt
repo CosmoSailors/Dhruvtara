@@ -39,7 +39,7 @@ fun AddLocationCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Adjust radius: ${(10 + (190 * sliderPosition)).toInt()}m",
+                text = "Adjust radius: ${(50 + (950 * sliderPosition)).toInt()}m",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
