@@ -1,6 +1,6 @@
 # 🌟 DhruvTara
 
-🚀 **DhruvTara** is a location-based alarm app that alerts you when you reach a predefined location. Never miss your stop or forget an important place again!
+🚀 **DhruvTara** is a location-based event-triggering app that notifies, rings an alarm, or turns on your do not disturb mode, you when you reach a predefined location. Never worry about missing an important place, forgetting to turn your dnd on/off when you enter/exit a place such as the library ever again!
 
 ## 📌 Features
 
@@ -14,7 +14,7 @@
 
 - Clone the repository:
    ```sh
-   git clone https://github.com/your-repo/dhruvtara.git
+   git clone https://github.com/CosmoSailors/Dhruvtara.git
 - Open the project in Android Studio.
 - Build and run on an emulator or device.
 
