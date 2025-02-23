@@ -1,7 +1,13 @@
 package com.grasstools.tangential.presentation.ui.locationlist
 
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -27,9 +33,44 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.ui.text.font.FontWeight
 import com.grasstools.tangential.domain.model.Geofence
+import com.grasstools.tangential.services.GeofenceManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LocationListActivity : ComponentActivity() {
     private val database by lazy { (application as App).database }
+    private lateinit var geofenceManager: GeofenceManager
+    private var geofenceManagerBound: Boolean = false
+
+    private val connection = object : GFMServiceConnection() {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as GeofenceManager.LocalBinder
+            geofenceManager = binder.getService()
+            gm = geofenceManager
+            geofenceManagerBound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            geofenceManagerBound = false
+        }
+    }
+
+    inner abstract class GFMServiceConnection: ServiceConnection {
+        lateinit var gm: GeofenceManager
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, GeofenceManager::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+    }
 
     private val viewModel by viewModels<LocationViewModel>(
         factoryProducer = {
@@ -49,29 +90,43 @@ class LocationListActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun LocationListScreen(vm: LocationViewModel) {
-    val geofencesList by vm.getAllRecords().collectAsState(initial = emptyList())
-    var expandedGeofenceId by remember { mutableStateOf<String?>(null) }
+    private fun resync() {
+        CoroutineScope(Dispatchers.IO).launch {
+            geofenceManager.clear()
+            geofenceManager.register(database.dao().getAllGeofencesSnapshot())
+        }
+    }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        items(geofencesList) { geofence ->
-            LocationRow(
-                geofence = geofence,
-                expandedGeofenceId = expandedGeofenceId,
-                onToggle = { vm.toggleEnabled(geofence) },
-                onDelete = { vm.deleteGeofence(geofence) },
-                onExpand = { id -> expandedGeofenceId = if (expandedGeofenceId == id) null else id }
-            )
+    @Composable
+    fun LocationListScreen(vm: LocationViewModel) {
+        val geofencesList by vm.getAllRecords().collectAsState(initial = emptyList())
+        var expandedGeofenceId by remember { mutableStateOf<String?>(null) }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            items(geofencesList) { geofence ->
+                LocationRow(
+                    geofence = geofence,
+                    expandedGeofenceId = expandedGeofenceId,
+                    onToggle = {
+                        vm.toggleEnabled(geofence)
+                        resync()
+                    },
+                    onDelete = {
+                        vm.deleteGeofence(geofence)
+                        resync()
+                    },
+                    onExpand = { id -> expandedGeofenceId = if (expandedGeofenceId == id) null else id }
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun LocationRow(

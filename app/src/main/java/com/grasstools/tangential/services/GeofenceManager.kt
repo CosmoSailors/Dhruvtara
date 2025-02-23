@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.location.Location
+import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -21,12 +22,17 @@ import java.util.TimerTask
 class GeofenceManager : Service() {
     fun register(geofence: Geofence) {
         taggedGeofences.add(TaggedGeofence(false, geofence))
+        Log.i("LOL", "reg" + taggedGeofences.toString())
     }
 
     fun register(geofences: List<Geofence>) {
         for (geofence in geofences) {
             register(geofence)
         }
+    }
+
+    fun clear() {
+        taggedGeofences.clear()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -36,8 +42,8 @@ class GeofenceManager : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    override fun onBind(intent: Intent?): IBinder {
+        return binder
     }
 
     override fun onDestroy() {
@@ -47,17 +53,7 @@ class GeofenceManager : Service() {
 
     private val POLL_RATE: Long = 5*1000
     private var timer: Timer? = null
-    private val taggedGeofences = mutableListOf<TaggedGeofence>(
-        TaggedGeofence(false, Geofence(
-            name = "Yo mama is here",
-            latitude = 37.40948,
-            longitude = -121.49235,
-            radius = 500.0f,
-            type = GeofenceType.DND,
-            config = "null",
-            enabled = true
-        )
-    ))
+    private val taggedGeofences = mutableListOf<TaggedGeofence>()
 
     private fun startForeground() {
         try {
@@ -106,6 +102,8 @@ class GeofenceManager : Service() {
     private val locationProvider = LocationServices.getFusedLocationProviderClient(
         App.getContext()!!)
 
+    private val binder = LocalBinder()
+
     data class TaggedGeofence(
         var tag: Boolean,
         val geofence: Geofence
@@ -122,5 +120,12 @@ class GeofenceManager : Service() {
         geofenceLocation.latitude = geofence.latitude
         geofenceLocation.longitude = geofence.longitude
         return currentLocation.distanceTo(geofenceLocation)
+    }
+
+    var isInit = false
+        private set
+
+    inner class LocalBinder: Binder() {
+        fun getService() = this@GeofenceManager
     }
 }

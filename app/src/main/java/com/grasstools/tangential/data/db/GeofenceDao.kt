@@ -42,6 +42,9 @@ interface GeofenceDao {
     @Query("SELECT * FROM geofences")
     fun getAllGeofences(): Flow<List<Geofence>>
 
+    @Query("SELECT * FROM geofences")
+    fun getAllGeofencesSnapshot(): List<Geofence>
+
     @Query("SELECT * FROM geofences WHERE id = :geofenceId")
     fun getGeofenceById(geofenceId: Int): Flow<Geofence?>
 
