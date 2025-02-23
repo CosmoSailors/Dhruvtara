@@ -48,11 +48,6 @@
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".presentation.ui.mainscreen.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Tangential" />
-        <activity
             android:name=".presentation.ui.locationlist.LocationListActivity"
             android:exported="false"
             android:label="@string/title_activity_location_list"
@@ -69,7 +64,6 @@
             android:theme="@style/Theme.Tangential">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
