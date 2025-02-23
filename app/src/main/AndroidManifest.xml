@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".DruvTaraApplication"
@@ -51,7 +52,7 @@
             android:name=".presentation.ui.locationlist.LocationListActivity"
             android:exported="false"
             android:label="@string/title_activity_location_list"
-            android:theme="@style/Theme.Tangential" />
+           />
         <activity
             android:name=".presentation.ui.alarmscreen.AlarmScreen"
             android:exported="false"

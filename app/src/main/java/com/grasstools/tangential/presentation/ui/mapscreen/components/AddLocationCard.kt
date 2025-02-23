@@ -1,24 +1,20 @@
 package com.grasstools.tangential.presentation.ui.mapscreen.components
 
-import android.content.Intent
+import SettingsIconButton
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
+import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 
 
 @Composable
@@ -28,7 +24,8 @@ fun AddLocationCard(
     onAddLocationClick: () -> Unit,
     onSettingsClick: () -> Unit,
     sliderPosition: Float,
-    onSliderChange: (Float) -> Unit
+    onSliderChange: (Float) -> Unit,
+vm: MapsViewModel
 ) {
 
     Card(
@@ -77,9 +74,10 @@ fun AddLocationCard(
                     Text(text = "Add Location", color = MaterialTheme.colorScheme.onSurface)
                 }
 
-                IconButton(onClick = onSettingsClick) {
-                    Icon(Icons.Filled.Settings, contentDescription = "Settings")
-                }
+                SettingsIconButton(
+                    showAllMarkersFlow = vm.showAllMarkersFlag,
+                    onToggleShowAllMarkers = { vm.toggleShowAllMarkers(it) }
+                )
             }
         }
     }
