@@ -13,6 +13,14 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.data.db.LocationDao
 import com.grasstools.tangential.domain.model.LocationTriggers
+import androidx.compose.runtime.State
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
 
 class MapsViewModel(
     private val dao: LocationDao,
@@ -31,8 +39,24 @@ class MapsViewModel(
     var radius by mutableStateOf(10.0f)
         private set
 
-    private var fusedLocationClient: FusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(context)
+    private val _showAllMarkersFlag = MutableStateFlow(false)
+    val showAllMarkersFlag: StateFlow<Boolean> = _showAllMarkersFlag.asStateFlow()
+
+    private val _allLocations = MutableStateFlow<List<LocationTriggers>>(emptyList())
+    val allLocations: StateFlow<List<LocationTriggers>> = _allLocations.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            dao.getAllLocations().collect { locations ->
+                _allLocations.value = locations
+            }
+        }
+    }
+
+    fun toggleShowAllMarkers(value: Boolean) {
+        _showAllMarkersFlag.value = value
+    }
+
 
     fun updateRadius(value: Float) {
         radius = value
@@ -51,22 +75,13 @@ class MapsViewModel(
 
     suspend fun insertLocationTrigger(locationTrigger: LocationTriggers) {
         dao.insertLocation(locationTrigger)
+        loadAllLocations()
     }
 
-    @SuppressLint("MissingPermission")
-    fun recenterMap() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    val newLatLng = LatLng(location.latitude, location.longitude)
-                    updateLatLong(newLatLng)
-                    Log.i("MapsViewModel", "recenterMap: Centered on $newLatLng")
-                } else {
-                    Log.e("MapsViewModel", "recenterMap: Failed to get location")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("MapsViewModel", "recenterMap: Error getting location", exception)
-            }
+    suspend fun loadAllLocations() {
+        dao.getAllLocations().collect { locations ->
+            _allLocations.value = locations
+        }
     }
+
 }

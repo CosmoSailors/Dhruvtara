@@ -8,8 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.DruvTaraApplication
 import com.grasstools.tangential.domain.model.LocationTriggers
@@ -57,7 +54,8 @@ class MapsActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         sliderPosition = viewModel.sliderPosition,
                         onLatLongChange = { viewModel.updateLatLong(it) }
-                        , latLng = LatLng( viewModel.latitude, viewModel.longitude )
+                        , latLng = LatLng( viewModel.latitude, viewModel.longitude ),
+                        vm = viewModel
                     )
 
 
@@ -75,7 +73,9 @@ class MapsActivity : ComponentActivity() {
                             onAddLocationClick = { showDialog = true },
                             onSettingsClick = { onSettingsClick() },
                             sliderPosition = viewModel.sliderPosition,
-                            onSliderChange = { viewModel.updateSliderPosition(it) }
+                            onSliderChange = { viewModel.updateSliderPosition(it)
+                            },
+                            vm = viewModel
                         )
                     }
 
