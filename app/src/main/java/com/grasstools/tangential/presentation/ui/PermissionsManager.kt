@@ -47,6 +47,10 @@ class PermissionsManager : ComponentActivity() {
             notificationGranted = granted
         }
 
+        if (locationGranted && notificationGranted) {
+            navigateToNextActivity(context)
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,8 +96,7 @@ class PermissionsManager : ComponentActivity() {
 
             Button(
                 onClick = {
-                    val intent = Intent(context, MapsActivity::class.java)
-                    startActivity(intent)
+                    navigateToNextActivity(context)
                     finish()
                 },
                 enabled = locationGranted && notificationGranted
@@ -101,6 +104,11 @@ class PermissionsManager : ComponentActivity() {
                 Text("-> Let's Go")
             }
         }
+    }
+
+    private fun navigateToNextActivity(context: Context) {
+        val intent = Intent(context, MapsActivity::class.java)
+        startActivity(intent)
     }
 
     private fun checkLocationPermission(context: Context): Boolean {

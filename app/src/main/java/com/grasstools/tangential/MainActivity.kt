@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -38,11 +39,12 @@ class MainActivity : ComponentActivity() {
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notifChannel)
 
-        navigateToNextActivity()
-
+        Log.i("MainActivity", "Creating service...")
         // launch service
         val intent = Intent(this, GeofenceManager::class.java)
         this.startForegroundService(intent)
+
+        navigateToNextActivity()
     }
 
     private fun navigateToNextActivity() {

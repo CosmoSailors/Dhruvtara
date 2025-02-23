@@ -21,6 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
+        android:appCategory="productivity"
+        android:hardwareAccelerated="true"
         tools:targetApi="34">
         <service
             android:name=".services.GeofenceManager"
@@ -46,14 +48,14 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Tangential">
-        </activity>
-        <activity
-            android:name=".presentation.ui.PermissionsManager"
-            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".presentation.ui.PermissionsManager"
+            android:exported="true">
         </activity>
 
         <meta-data
