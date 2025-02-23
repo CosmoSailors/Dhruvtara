@@ -53,16 +53,6 @@ class MapsActivity : ComponentActivity() {
             val binder = service as GeofenceManager.LocalBinder
             geofenceManager = binder.getService()
             geofenceManagerBound = true
-
-            if (geofenceManager.isInit) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    for (geofence in database.dao().getAllGeofencesSnapshot()) {
-                        geofenceManager.register(geofence)
-                    }
-                }
-            } else {
-                Log.i("LOL", "Already init")
-            }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -90,10 +80,8 @@ class MapsActivity : ComponentActivity() {
     }
 
     private fun resync() {
-        CoroutineScope(Dispatchers.IO).launch {
-            geofenceManager.clear()
-            geofenceManager.register(database.dao().getAllGeofencesSnapshot())
-        }
+        geofenceManager.clear()
+        geofenceManager.register(database.dao().getAllGeofencesSnapshot())
     }
 
     @Composable
@@ -156,6 +144,9 @@ class MapsActivity : ComponentActivity() {
                                     nickname,
                                     type = viewModel.type.value
                                 )
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    resync()
+                                }
                                 showDialog = false
                                 navigateToLocationListActivity()
                             },
@@ -182,8 +173,8 @@ class MapsActivity : ComponentActivity() {
                     enabled = true
                 )
             )
-            resync()
         }
+
     }
 
     private fun navigateToLocationListActivity() {

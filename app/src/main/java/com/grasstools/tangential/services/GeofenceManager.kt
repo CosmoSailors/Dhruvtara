@@ -123,7 +123,6 @@ class GeofenceManager : Service() {
     }
 
     var isInit = false
-        private set
 
     inner class LocalBinder: Binder() {
         fun getService() = this@GeofenceManager
