@@ -35,7 +35,7 @@ class MapsViewModel(
     private val _longitude = MutableStateFlow(0.0)
     val longitude: StateFlow<Double> = _longitude.asStateFlow()
 
-    var radius by mutableFloatStateOf(10.0f)
+    var radius by mutableFloatStateOf(50.0f)
         private set
 
     private val _type = MutableStateFlow(GeofenceType.DND)
