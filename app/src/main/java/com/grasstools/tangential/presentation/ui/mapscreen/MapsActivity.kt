@@ -12,12 +12,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -25,7 +27,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
-import com.grasstools.tangential.presentation.ui.alarmscreen.AlarmScreen
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
@@ -34,7 +35,6 @@ import com.grasstools.tangential.services.GeofenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.reflect.typeOf
 
 class MapsActivity : ComponentActivity() {
     private lateinit var geofenceManager: GeofenceManager
@@ -120,22 +120,17 @@ class MapsActivity : ComponentActivity() {
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                     ) {
-                        Button(onClick = {
-                            viewModel.getCurrentLocation()
-                                         }, modifier = Modifier
-                            .padding(4.dp)
-                            .align(Alignment.CenterHorizontally)
+                        FilledTonalIconButton(
+                            onClick = { viewModel.getCurrentLocation() },
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .align(Alignment.End)
                         ) {
-                            Text(
-                                text = "Current Location",
-                                textAlign = TextAlign.Center
-                            )
+                            Icon(Icons.Default.LocationOn, contentDescription = "Current Location")
                         }
 
                         AddLocationCard(
-                            modifier = Modifier
-                                .fillMaxWidth().height(200.dp)
-                                ,
+                            modifier = Modifier.fillMaxWidth().height(200.dp),
                             onSavedLocationsClick = { onSavedLocationsClick() },
                             onAddLocationClick = { showDialog = true },
                             onSettingsClick = { onSettingsClick() },
