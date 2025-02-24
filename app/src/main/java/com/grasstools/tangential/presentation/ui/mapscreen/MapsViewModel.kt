@@ -74,7 +74,7 @@ class MapsViewModel(
 
     fun updateSliderPosition(value: Float) {
         sliderPosition = value
-        updateRadius(10 + (190 * value))
+        updateRadius(50 + (950 * value))
     }
 
     fun updateType(value: GeofenceType) {
