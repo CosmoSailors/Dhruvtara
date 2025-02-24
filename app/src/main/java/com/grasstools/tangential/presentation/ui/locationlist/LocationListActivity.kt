@@ -31,17 +31,23 @@ import com.grasstools.tangential.App
 import com.grasstools.tangential.presentation.ui.locationlist.ui.theme.TangentialTheme
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.font.FontWeight
+import com.grasstools.tangential.data.db.GeofenceViewModel
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.services.GeofenceManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LocationListActivity : ComponentActivity() {
+@AndroidEntryPoint
+class LocationListActivity(geofenceViewModel: GeofenceViewModel) : ComponentActivity() {
     private val database by lazy { (application as App).database }
     private lateinit var geofenceManager: GeofenceManager
     private var geofenceManagerBound: Boolean = false
+
+    val geofences: List<Geofence> by geofenceViewModel.geofences.collectAsState(initial = emptyList())
 
     private val connection = object : GFMServiceConnection() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {

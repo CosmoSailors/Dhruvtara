@@ -9,29 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GeofenceDao {
-//    @Upsert
-//    suspend fun upsertDataModel(dataModel: LocationTriggers)
-//
-//    @Insert
-//    suspend fun insertLocation(location: LocationTriggers)
-//
-//    @Query("SELECT * FROM locations")
-//    fun getAllLocations(): Flow<List<LocationTriggers>>
-//
-//    @Query("SELECT * FROM locations WHERE id = :locationId")
-//    fun getLocationById(locationId: Int): Flow<LocationTriggers?>
-//
-//    @Query("SELECT * FROM locations WHERE name LIKE :searchQuery")
-//    fun searchLocations(searchQuery: String): Flow<List<LocationTriggers>>
-//
-//    @Query("DELETE FROM locations WHERE id = :locationId")
-//    suspend fun deleteLocationById(locationId: Int)
-//
-//    @Query("UPDATE locations SET isDndEnabled = :isDndEnabled WHERE id = :locationId")
-//    suspend fun updateDndStatus(locationId: Int, isDndEnabled: Boolean)
-//
-//    @Query("DELETE FROM locations")
-//    suspend fun deleteAllLocations()
 
     @Upsert
     suspend fun upsertDataModel(dataModel: Geofence)

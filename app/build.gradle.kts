@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 
 }
 
@@ -67,6 +68,11 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.lifecycle.livedata)
+    implementation(libs.androidx.runtime.livedata)
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
@@ -79,7 +85,12 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation (libs.material)
     implementation(libs.androidx.room.ktx)
-    kapt("androidx.room:room-compiler:2.6.1")// Use latest version
+    kapt(libs.androidx.room.compiler)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+
 
 
 }

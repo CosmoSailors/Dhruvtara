@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.grasstools.tangential.data.db.TangentialDatabase
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class App: Application() {
     companion object {
         private var applicationInstance: App? = null
