@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
@@ -35,6 +37,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.reflect.typeOf
+
+
 
 class MapsActivity : ComponentActivity() {
     private lateinit var geofenceManager: GeofenceManager
@@ -90,6 +94,11 @@ class MapsActivity : ComponentActivity() {
         val latitude by viewModel.latitude.collectAsState()
         val longitude by viewModel.longitude.collectAsState()
 
+        val navController = rememberNavController()
+
+        NavHost(navController = navController, startDestination =DhruvtaraScreen.Map.name, modifier = Modifier.padding(16.dp)){
+
+        }
         val type by viewModel.type.collectAsState()
 
         TangentialTheme {

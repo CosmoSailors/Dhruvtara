@@ -14,6 +14,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import com.grasstools.tangential.presentation.ui.PermissionsManager
 import com.grasstools.tangential.services.GeofenceManager
 import kotlinx.coroutines.delay
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var geofenceManager: GeofenceManager
     private var geofenceManagerBound: Boolean = false
     private val database by lazy { (application as App).database }
+
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
