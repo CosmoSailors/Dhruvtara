@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.presentation.ui.DhruvtaraScreen
 import com.grasstools.tangential.presentation.ui.alarmscreen.AlarmScreen
 import com.grasstools.tangential.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.locationlist.LocationListActivity
@@ -67,14 +68,16 @@ class MapsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MapsScreen()
+            
+//            MapsScreen()
+            DhruvtaraScreen()
         }
     }
 
     override fun onStart() {
         super.onStart()
         Intent(this, GeofenceManager::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            bindService(intent, connection, BIND_AUTO_CREATE)
         }
     }
 
@@ -88,87 +91,83 @@ class MapsActivity : ComponentActivity() {
         geofenceManager.register(database.dao().getAllGeofencesSnapshot())
     }
 
-    @Composable
-    private fun MapsScreen() {
-        var showDialog by remember { mutableStateOf(false) }
-        val latitude by viewModel.latitude.collectAsState()
-        val longitude by viewModel.longitude.collectAsState()
-
-        val navController = rememberNavController()
-
-        NavHost(navController = navController, startDestination =DhruvtaraScreen.Map.name, modifier = Modifier.padding(16.dp)){
-
-        }
-        val type by viewModel.type.collectAsState()
-
-        TangentialTheme {
-            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    GoogleMapComposable(
-                        modifier = Modifier.fillMaxSize(),
-                        sliderPosition = viewModel.sliderPosition,
-                        onLatLongChange = { viewModel.updateLatLong(it) }
-                        , latLng = LatLng( latitude, longitude ),
-                        vm = viewModel
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                    ) {
-                        Button(onClick = {
-                            viewModel.getCurrentLocation()
-                                         }, modifier = Modifier
-                            .padding(4.dp)
-                            .align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(
-                                text = "Current Location",
-                                textAlign = TextAlign.Center
-                            )
-                        }
-
-                        AddLocationCard(
-                            modifier = Modifier
-                                .fillMaxWidth().height(200.dp)
-                                ,
-                            onSavedLocationsClick = { onSavedLocationsClick() },
-                            onAddLocationClick = { showDialog = true },
-                            onSettingsClick = { onSettingsClick() },
-                            sliderPosition = viewModel.sliderPosition,
-                            onSliderChange = { viewModel.updateSliderPosition(it)
-                            },
-                            vm = viewModel
-                        )
-                    }
-
-
-
-                    if (showDialog) {
-                        AddNickNameDialog(
-                            onDismissRequest = { showDialog = false },
-                            onLocationAdded = { nickname ->
-                                insertTrigger(
-                                    nickname,
-                                    type = viewModel.type.value
-                                )
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    resync()
-                                }
-                                showDialog = false
-                                navigateToLocationListActivity()
-                            },
-                            latitude = latitude,
-                            longitude = longitude,
-                            radius = viewModel.radius,
-                            vm = viewModel
-                        )
-                    }
-                }
-            }
-        }
-    }
+//    @Composable
+//    private fun MapsScreen() {
+//        var showDialog by remember { mutableStateOf(false) }
+//        val latitude by viewModel.latitude.collectAsState()
+//        val longitude by viewModel.longitude.collectAsState()
+//
+//
+//        val type by viewModel.type.collectAsState()
+//
+//        TangentialTheme {
+//            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+//                Box(modifier = Modifier.fillMaxSize()) {
+//                    GoogleMapComposable(
+//                        modifier = Modifier.fillMaxSize(),
+//                        sliderPosition = viewModel.sliderPosition,
+//                        onLatLongChange = { viewModel.updateLatLong(it) }
+//                        , latLng = LatLng( latitude, longitude ),
+//                        vm = viewModel
+//                    )
+//
+//                    Column(
+//                        modifier = Modifier
+//                            .align(Alignment.BottomCenter)
+//                            .fillMaxWidth()
+//                    ) {
+//                        Button(onClick = {
+//                            viewModel.getCurrentLocation()
+//                                         }, modifier = Modifier
+//                            .padding(4.dp)
+//                            .align(Alignment.CenterHorizontally)
+//                        ) {
+//                            Text(
+//                                text = "Current Location",
+//                                textAlign = TextAlign.Center
+//                            )
+//                        }
+//
+//                        AddLocationCard(
+//                            modifier = Modifier
+//                                .fillMaxWidth().height(200.dp)
+//                                ,
+//                            onSavedLocationsClick = { onSavedLocationsClick() },
+//                            onAddLocationClick = { showDialog = true },
+//                            onSettingsClick = { onSettingsClick() },
+//                            sliderPosition = viewModel.sliderPosition,
+//                            onSliderChange = { viewModel.updateSliderPosition(it)
+//                            },
+//                            vm = viewModel
+//                        )
+//                    }
+//
+//
+//
+//                    if (showDialog) {
+//                        AddNickNameDialog(
+//                            onDismissRequest = { showDialog = false },
+//                            onLocationAdded = { nickname ->
+//                                insertTrigger(
+//                                    nickname,
+//                                    type = viewModel.type.value
+//                                )
+//                                CoroutineScope(Dispatchers.IO).launch {
+//                                    resync()
+//                                }
+//                                showDialog = false
+//                                navigateToLocationListActivity()
+//                            },
+//                            latitude = latitude,
+//                            longitude = longitude,
+//                            radius = viewModel.radius,
+//                            vm = viewModel
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
     private fun insertTrigger(nickname: String, type: GeofenceType) {
         viewModel.viewModelScope.launch {
             viewModel.insertLocationTrigger(

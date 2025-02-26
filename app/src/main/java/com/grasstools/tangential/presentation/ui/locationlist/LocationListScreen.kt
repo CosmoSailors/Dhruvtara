@@ -5,8 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun LocationListScreen() {
+fun LocationListScreen(onNavigateToAlert: () -> Unit, onNavigationToMaps: () -> Unit) {
     Column {
-        Text("hello world")
+        Text("hello List Screen")
     }
 }
