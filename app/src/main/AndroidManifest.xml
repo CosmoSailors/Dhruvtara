@@ -33,10 +33,7 @@
             android:permission="android.permission.ACCESS_FINE_LOCATION" />
 
 
-        <activity
-            android:name=".presentation.ui.locationlist.LocationListActivity"
-            android:exported="false"
-            android:label="@string/title_activity_location_list" />
+
         <activity
             android:name=".presentation.ui.alarmscreen.AlarmScreen"
             android:exported="false"

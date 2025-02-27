@@ -33,6 +33,7 @@ fun DhruvtaraScreen(geofenceManager: GeofenceManager) {
 
         composable<LocationListScreen> {
             LocationListScreen(
+                geofenceManager = geofenceManager,
                 onNavigationToMaps = { navController.navigate(route = MapsScreen) },
                 onNavigateToAlert = { navController.navigate(route = AlertScreen) }
             )

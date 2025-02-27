@@ -1,15 +1,20 @@
 package com.grasstools.tangential.presentation.ui.locationlist
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.grasstools.tangential.App
 import com.grasstools.tangential.data.db.GeofenceDao
 import com.grasstools.tangential.domain.model.Geofence
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class LocationViewModel(
-    private val dao: GeofenceDao
-): ViewModel() {
+class LocationViewModel(application: Application
+): AndroidViewModel(application) {
+
+    private val database by lazy { (application as App).database }
+    val dao = database.dao()
 
     fun toggleEnabled(geofence: Geofence) {
         viewModelScope.launch {
