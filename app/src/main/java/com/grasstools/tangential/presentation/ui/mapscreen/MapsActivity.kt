@@ -45,13 +45,13 @@ class MapsActivity : ComponentActivity() {
     private lateinit var geofenceManager: GeofenceManager
     private var geofenceManagerBound: Boolean = false
     private val database by lazy { (application as App).database }
-    private val viewModel by viewModels<MapsViewModel> {
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MapsViewModel(database.dao(), applicationContext) as T
-            }
-        }
-    }
+//    private val viewModel by viewModels<MapsViewModel> {
+//        object : ViewModelProvider.Factory {
+//            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//                return MapsViewModel(database.dao(), applicationContext) as T
+//            }
+//        }
+//    }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -168,22 +168,22 @@ class MapsActivity : ComponentActivity() {
 //            }
 //        }
 //    }
-    private fun insertTrigger(nickname: String, type: GeofenceType) {
-        viewModel.viewModelScope.launch {
-            viewModel.insertLocationTrigger(
-                Geofence(
-                    name = nickname,
-                    latitude = viewModel.latitude.value,
-                    longitude = viewModel.longitude.value,
-                    radius = viewModel.radius,
-                    type = type,
-                    config = "",
-                    enabled = true
-                )
-            )
-        }
-
-    }
+//    private fun insertTrigger(nickname: String, type: GeofenceType) {
+//        viewModel.viewModelScope.launch {
+//            viewModel.insertLocationTrigger(
+//                Geofence(
+//                    name = nickname,
+//                    latitude = viewModel.latitude.value,
+//                    longitude = viewModel.longitude.value,
+//                    radius = viewModel.radius,
+//                    type = type,
+//                    config = "",
+//                    enabled = true
+//                )
+//            )
+//        }
+//
+//    }
 
     private fun navigateToLocationListActivity() {
         startActivity(Intent(this, LocationListActivity::class.java))

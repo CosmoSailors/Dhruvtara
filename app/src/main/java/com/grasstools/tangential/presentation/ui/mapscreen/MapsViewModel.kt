@@ -4,17 +4,21 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.Manifest
+import android.app.Application
 import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.grasstools.tangential.App
 import com.grasstools.tangential.data.db.GeofenceDao
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
@@ -22,9 +26,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MapsViewModel(
-    private val dao: GeofenceDao,
-    private val context: Context
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application ) {
+
+    private val database by lazy { (application as App).database }
+    val dao = database.dao()
+
 
     var sliderPosition by mutableFloatStateOf(0f)
         private set
@@ -101,12 +108,12 @@ class MapsViewModel(
     @SuppressLint("MissingPermission")
     fun getCurrentLocation() {
         if (ContextCompat.checkSelfPermission(
-                context,
+                application,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             val fusedLocationClient: FusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(context)
+                LocationServices.getFusedLocationProviderClient(application)
 
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
