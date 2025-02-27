@@ -11,35 +11,39 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Text
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.rememberNavController
-import com.grasstools.tangential.presentation.ui.PermissionsManager
+import com.grasstools.tangential.presentation.ui.DhruvtaraScreen
 import com.grasstools.tangential.services.GeofenceManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
 class MainActivity : ComponentActivity() {
-    private lateinit var geofenceManager: GeofenceManager
+    private var geofenceManager by mutableStateOf<GeofenceManager?>(null)
     private var geofenceManagerBound: Boolean = false
     private val database by lazy { (application as App).database }
-
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as GeofenceManager.LocalBinder
-            geofenceManager = binder.getService()
+            geofenceManager = binder.getService() // Update state
             geofenceManagerBound = true
 
-            if (!geofenceManager.isInit) {
+            if (!geofenceManager!!.isInit) {
                 CoroutineScope(Dispatchers.IO).launch {
                     for (geofence in database.dao().getAllGeofencesSnapshot()) {
-                        geofenceManager.register(geofence)
+                        geofenceManager?.register(geofence)
                     }
-                    geofenceManager.isInit = true
+                    geofenceManager?.isInit = true
                 }
             } else {
                 Log.i("LOL", "Already init")
@@ -47,6 +51,7 @@ class MainActivity : ComponentActivity() {
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
+            geofenceManager = null
             geofenceManagerBound = false
         }
     }
@@ -55,7 +60,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // splash screen
         val splashscreen = installSplashScreen()
         var keepSplashScreen = true
         splashscreen.setKeepOnScreenCondition { keepSplashScreen }
@@ -64,7 +68,12 @@ class MainActivity : ComponentActivity() {
             keepSplashScreen = false
         }
 
-        // create a notification channel, TODO: put this elsewhere?
+        setContent {
+            geofenceManager?.let { manager ->
+                DhruvtaraScreen(geofenceManager = manager)
+            } ?: Text("Loading...")
+        }
+
         val notifChannel = NotificationChannel(
             "SERVICE_CHAN",
             getString(R.string.notif_channel_name),
@@ -74,12 +83,8 @@ class MainActivity : ComponentActivity() {
         val notificationManager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notifChannel)
 
-        Log.i("MainActivity", "Creating service...")
-        // launch service
         val intent = Intent(this, GeofenceManager::class.java)
         this.startForegroundService(intent)
-
-        navigateToNextActivity()
     }
 
     override fun onStart() {
@@ -87,16 +92,10 @@ class MainActivity : ComponentActivity() {
         Intent(this, GeofenceManager::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
-
     }
 
     override fun onStop() {
         super.onStop()
         unbindService(connection)
-    }
-
-    private fun navigateToNextActivity() {
-        val intent = Intent(this, PermissionsManager::class.java) // Replace NextActivity
-        startActivity(intent)
     }
 }

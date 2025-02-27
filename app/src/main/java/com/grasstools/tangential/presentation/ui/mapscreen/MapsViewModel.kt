@@ -124,4 +124,21 @@ class MapsViewModel(
             }
         }
     }
+
+    fun onDialogSaveButtonClick(nickname: String) {
+
+        val newGeofence = Geofence(
+            name = nickname,
+            latitude = latitude.value,
+            longitude = longitude.value,
+            radius = radius,
+            type = type.value,
+            config = "",
+            enabled = true
+        )
+        viewModelScope.launch {
+            insertLocationTrigger(newGeofence)
+        }
+
+    }
 }

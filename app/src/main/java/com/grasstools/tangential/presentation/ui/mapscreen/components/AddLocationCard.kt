@@ -18,7 +18,6 @@ fun AddLocationCard(
     modifier: Modifier = Modifier,
     onSavedLocationsClick: () -> Unit,
     onAddLocationClick: () -> Unit,
-    onSettingsClick: () -> Unit,
     sliderPosition: Float,
     onSliderChange: (Float) -> Unit,
     vm: MapsViewModel

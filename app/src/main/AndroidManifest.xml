@@ -32,10 +32,7 @@
             android:foregroundServiceType="location"
             android:permission="android.permission.ACCESS_FINE_LOCATION" />
 
-        <activity
-            android:name=".presentation.ui.mapscreen.MapsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
+
         <activity
             android:name=".presentation.ui.locationlist.LocationListActivity"
             android:exported="false"

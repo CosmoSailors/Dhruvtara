@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.grasstools.tangential.presentation.ui.alarmscreen.ui.theme.TangentialTheme
-import com.grasstools.tangential.presentation.ui.mapscreen.MapsActivity
 
 class PermissionsManager : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +50,7 @@ fun PermissionsScreen() {
 
     LaunchedEffect(locationGranted, notificationGranted, dndAccessGranted) {
         if (locationGranted && notificationGranted && dndAccessGranted) {
-            navigateToNextActivity(context)
+//            navigateToNextActivity(context)
             (context as? ComponentActivity)?.finish()
         }
     }
@@ -107,7 +106,7 @@ fun PermissionsScreen() {
 
             Button(
                 onClick = {
-                    navigateToNextActivity(context)
+//                    navigateToNextActivity(context)
                     (context as? ComponentActivity)?.finish()
                 },
                 enabled = locationGranted && notificationGranted,
@@ -175,10 +174,10 @@ fun PermissionCard(
     }
 }
 
-private fun navigateToNextActivity(context: Context) {
-    val intent = Intent(context, MapsActivity::class.java)
-    context.startActivity(intent)
-}
+//private fun navigateToNextActivity(context: Context) {
+//    val intent = Intent(context, MapsActivity::class.java)
+//    context.startActivity(intent)
+//}
 
 private fun checkLocationPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
