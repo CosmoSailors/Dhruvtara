@@ -4,6 +4,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,13 +27,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationListScreen(
     onNavigateToAlert: () -> Unit,
-    onNavigationToMaps: () -> Unit,
+    onNavigationToMaps: () -> Unit,  // Back button should navigate back to Maps
     geofenceManager: GeofenceManager
 ) {
-
     val viewModel: LocationViewModel = viewModel()
 
     val geofencesList by viewModel.getAllRecords().collectAsState(initial = emptyList())
@@ -38,25 +46,39 @@ fun LocationListScreen(
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        items(geofencesList) { geofence ->
-            LocationRow(
-                geofence = geofence,
-                expandedGeofenceId = expandedGeofenceId,
-                onToggle = {
-                    viewModel.toggleEnabled(geofence)
-                    resync()
-                },
-                onDelete = {
-                    viewModel.deleteGeofence(geofence)
-                    resync()
-                },
-                onExpand = { id -> expandedGeofenceId = if (expandedGeofenceId == id) null else id }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Location List") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigationToMaps) {  // Back button
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)  // Adjust padding to avoid overlapping the AppBar
+                .padding(horizontal = 8.dp)
+        ) {
+            items(geofencesList) { geofence ->
+                LocationRow(
+                    geofence = geofence,
+                    expandedGeofenceId = expandedGeofenceId,
+                    onToggle = {
+                        viewModel.toggleEnabled(geofence)
+                        resync()
+                    },
+                    onDelete = {
+                        viewModel.deleteGeofence(geofence)
+                        resync()
+                    },
+                    onExpand = { id -> expandedGeofenceId = if (expandedGeofenceId == id) null else id }
+                )
+            }
         }
     }
 }

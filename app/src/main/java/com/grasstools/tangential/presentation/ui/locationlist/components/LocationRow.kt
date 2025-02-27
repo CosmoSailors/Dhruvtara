@@ -40,7 +40,7 @@ fun LocationRow(
     val isExpanded = geofence.id.toString() == expandedGeofenceId
 
     Card(
-        shape = RoundedCornerShape(16.dp), // Softer rounded corners
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
