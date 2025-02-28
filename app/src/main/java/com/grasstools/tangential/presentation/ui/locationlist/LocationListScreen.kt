@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LocationListScreen(
     onNavigateToAlert: () -> Unit,
-    onNavigationToMaps: () -> Unit,  // Back button should navigate back to Maps
+    onNavigationToMaps: () -> Unit,
     geofenceManager: GeofenceManager
 ) {
     val viewModel: LocationViewModel = viewModel()
@@ -51,7 +51,7 @@ fun LocationListScreen(
             TopAppBar(
                 title = { Text("Location List") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigationToMaps) {  // Back button
+                    IconButton(onClick = onNavigationToMaps) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -61,7 +61,7 @@ fun LocationListScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)  // Adjust padding to avoid overlapping the AppBar
+                .padding(paddingValues)
                 .padding(horizontal = 8.dp)
         ) {
             items(geofencesList) { geofence ->
