@@ -34,11 +34,7 @@
 
 
 
-        <activity
-            android:name=".presentation.ui.alarmscreen.AlarmScreen"
-            android:exported="false"
-            android:label="@string/title_activity_alarm_screen"
-            android:theme="@style/Theme.App.Starting" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -5,10 +5,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -20,25 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.grasstools.tangential.presentation.ui.alarmscreen.ui.theme.TangentialTheme
 
-class PermissionsManager : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            TangentialTheme {
-                PermissionsScreen()
-            }
-        }
-    }
-}
 
 @Composable
-fun PermissionsScreen() {
+fun PermissionsScreen(onNavigateToMaps: () -> Unit) {
     val context = LocalContext.current
     var locationGranted by remember { mutableStateOf(checkLocationPermission(context)) }
     var notificationGranted by remember { mutableStateOf(checkNotificationPermission(context)) }
     var dndAccessGranted by remember { mutableStateOf(checkDndAccess(context)) }
+
+    var hasDndPermission by remember { mutableStateOf(checkDndAccess(context)) }
+
 
     val locationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -49,9 +39,9 @@ fun PermissionsScreen() {
     ) { granted -> notificationGranted = granted }
 
     LaunchedEffect(locationGranted, notificationGranted, dndAccessGranted) {
-        if (locationGranted && notificationGranted && dndAccessGranted) {
-//            navigateToNextActivity(context)
-            (context as? ComponentActivity)?.finish()
+        while (true) {
+            hasDndPermission = checkDndAccess(context)  // Continuously check for permission changes
+            kotlinx.coroutines.delay(1000)  // Check every second (adjust as needed)
         }
     }
 
@@ -75,6 +65,17 @@ fun PermissionsScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             PermissionCard(
+                title = "DND Access",
+                description = "Allows automatic Do Not Disturb mode",
+                granted = hasDndPermission,
+                onRequest = {
+                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                    context.startActivity(intent)
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PermissionCard(
                 title = "Location Access",
                 description = "Required for geofencing & map features",
                 granted = locationGranted,
@@ -92,24 +93,15 @@ fun PermissionsScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            PermissionCard(
-                title = "DND Access",
-                description = "Allows automatic Do Not Disturb mode",
-                granted = dndAccessGranted,
-                onRequest = {
-                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                    context.startActivity(intent)
-                }
-            )
+
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = {
-//                    navigateToNextActivity(context)
-                    (context as? ComponentActivity)?.finish()
+                    onNavigateToMaps()
                 },
-                enabled = locationGranted && notificationGranted,
+                enabled = locationGranted && notificationGranted && hasDndPermission,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
@@ -120,6 +112,7 @@ fun PermissionsScreen() {
         }
     }
 }
+
 
 @Composable
 fun PermissionCard(
@@ -192,7 +185,6 @@ private fun checkNotificationPermission(context: Context): Boolean {
 }
 
 private fun checkDndAccess(context: Context): Boolean {
-    val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     return notificationManager.isNotificationPolicyAccessGranted
 }
