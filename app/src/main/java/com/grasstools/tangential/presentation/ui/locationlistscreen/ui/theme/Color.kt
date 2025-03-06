@@ -1,4 +1,4 @@
-package com.grasstools.tangential.presentation.ui.locationlist.ui.theme
+package com.grasstools.tangential.presentation.ui.locationlistscreen.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

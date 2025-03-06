@@ -1,11 +1,9 @@
-package com.grasstools.tangential.presentation.ui.locationlist
+package com.grasstools.tangential.presentation.ui.locationlistscreen
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grasstools.tangential.App
-import com.grasstools.tangential.data.db.GeofenceDao
 import com.grasstools.tangential.domain.model.Geofence
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch

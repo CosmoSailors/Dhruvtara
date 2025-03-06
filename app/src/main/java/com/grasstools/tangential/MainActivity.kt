@@ -1,6 +1,4 @@
 package com.grasstools.tangential
-
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -19,7 +17,6 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
 
-    @SuppressLint("PermissionLaunchedDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

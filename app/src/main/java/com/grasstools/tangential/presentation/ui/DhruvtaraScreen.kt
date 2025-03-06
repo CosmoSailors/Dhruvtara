@@ -23,8 +23,9 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grasstools.tangential.App
 import com.grasstools.tangential.presentation.ui.alarmscreen.AlarmScreen
-import com.grasstools.tangential.presentation.ui.locationlist.LocationListScreen
+import com.grasstools.tangential.presentation.ui.locationlistscreen.LocationListScreen
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsScreen
+import com.grasstools.tangential.presentation.ui.permissionscreen.PermissionsScreen
 import com.grasstools.tangential.services.GeofenceManager
 import com.grasstools.tangential.utils.NavControllerHolder
 import kotlinx.coroutines.CoroutineScope

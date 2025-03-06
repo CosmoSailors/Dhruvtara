@@ -14,9 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +35,8 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
 
     val latitude by viewModel.latitude.collectAsState()
     val longitude by viewModel.longitude.collectAsState()
-    var showDialog by remember { mutableStateOf(false) }
+    val showDialogFlag by viewModel.showDialogFlag.collectAsState()
+
 
     fun resync() {
         geofenceManager.clear()
@@ -78,23 +76,23 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
                         modifier = Modifier
                             .fillMaxWidth().height(200.dp),
                         onSavedLocationsClick =  onNavigateToLocationList ,
-                        onAddLocationClick = { showDialog = true },
+                        onAddLocationClick = {viewModel.onAddLocationClick()},
                         sliderPosition = viewModel.sliderPosition,
                         onSliderChange = {
                             viewModel.updateSliderPosition(it)
                         },
-                        vm = viewModel
+                        showAllMarkersFlag = viewModel.showAllMarkersFlag,
+                        onToggleShowAllMarkers ={ viewModel.toggleShowAllMarkers(it) }
                     )
                 }
 
 
 
-                if (showDialog) {
+                if (showDialogFlag) {
                     AddNickNameDialog(
-                        onDismissRequest = { showDialog = false },
+                        onDismissRequest = { viewModel.onDialogDismiss() },
                         onLocationAdded = { nickname ->
                             viewModel.onDialogSaveButtonClick(nickname)
-                            showDialog = false
                             onNavigateToLocationList()
                             CoroutineScope(Dispatchers.IO).launch {
                               resync()

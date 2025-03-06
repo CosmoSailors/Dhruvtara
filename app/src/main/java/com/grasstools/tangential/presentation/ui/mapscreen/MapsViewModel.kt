@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -22,16 +23,19 @@ import com.grasstools.tangential.App
 import com.grasstools.tangential.data.db.GeofenceDao
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.services.GeofenceManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MapsViewModel(
-    application: Application
+    application: Application,
 ) : AndroidViewModel(application ) {
 
     private val database by lazy { (application as App).database }
     val dao = database.dao()
 
+    private val _showDialogFlag = MutableStateFlow(false)
+    val showDialogFlag: StateFlow<Boolean> = _showDialogFlag.asStateFlow()
 
     var sliderPosition by mutableFloatStateOf(0f)
         private set
@@ -76,7 +80,6 @@ class MapsViewModel(
     fun updateLatLong(value: LatLng) {
         _latitude.value = value.latitude
         _longitude.value = value.longitude
-        Log.i("MapsViewModel", "updateLatLong: ${_latitude.value}, ${_longitude.value}")
     }
 
     fun updateSliderPosition(value: Float) {
@@ -88,12 +91,12 @@ class MapsViewModel(
         _type.value = value
     }
 
-    suspend fun insertLocationTrigger(geofence: Geofence) {
+    private suspend fun insertLocationTrigger(geofence: Geofence) {
         dao.insertGeofence(geofence)
         loadAllGeofences()
     }
 
-    suspend fun loadAllGeofences() {
+    private suspend fun loadAllGeofences() {
         viewModelScope.launch {
             dao.getAllGeofences().collect { geofences ->
                 _allGeofences.value = geofences
@@ -138,7 +141,17 @@ class MapsViewModel(
         )
         viewModelScope.launch {
             insertLocationTrigger(newGeofence)
+        }.invokeOnCompletion {
+            onDialogDismiss()
         }
 
+    }
+
+    fun onAddLocationClick(){
+        _showDialogFlag.value = true
+    }
+
+    fun onDialogDismiss(){
+        _showDialogFlag.value = false
     }
 }

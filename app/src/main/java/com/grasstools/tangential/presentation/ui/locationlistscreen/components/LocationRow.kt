@@ -1,4 +1,4 @@
-package com.grasstools.tangential.presentation.ui.locationlist.components
+package com.grasstools.tangential.presentation.ui.locationlistscreen.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

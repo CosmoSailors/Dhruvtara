@@ -1,4 +1,4 @@
-package com.grasstools.tangential.presentation.ui.locationlist
+package com.grasstools.tangential.presentation.ui.locationlistscreen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.grasstools.tangential.presentation.ui.locationlist.components.LocationRow
+import com.grasstools.tangential.presentation.ui.locationlistscreen.components.LocationRow
 import com.grasstools.tangential.services.GeofenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
