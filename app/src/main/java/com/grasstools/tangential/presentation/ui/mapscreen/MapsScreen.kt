@@ -98,9 +98,6 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
                               resync()
                            }
                         },
-                        latitude = latitude,
-                        longitude = longitude,
-                        radius = viewModel.radius,
                         vm = viewModel
                     )
                 }

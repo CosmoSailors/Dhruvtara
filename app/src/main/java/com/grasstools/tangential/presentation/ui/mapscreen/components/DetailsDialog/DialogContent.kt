@@ -29,21 +29,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogContent(
-    nickname: String,
-    onNicknameChange: (String) -> Unit,
-    latitude: Double,
-    longitude: Double,
-    radius: Float,
+    locationName: String,
+    onLocationNameChange: (String) -> Unit,
     vm: MapsViewModel
 ) {
     var expanded by remember { mutableStateOf(false) }
     val locationTypes = listOf("DND", "Alarm")
 
     val type by vm.type.collectAsState()
+    val latitude by vm.latitude.collectAsState()
+    val longitude by vm.longitude.collectAsState()
+    val radius = vm.radius
 
     Column(
         modifier = Modifier
@@ -67,16 +68,15 @@ fun DialogContent(
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Latitude: $latitude", style = MaterialTheme.typography.bodyMedium)
                 Text(text = "Longitude: $longitude", style = MaterialTheme.typography.bodyMedium)
-                Text(text = "Radius: ${radius}m", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "Radius: ${radius.roundToInt()}m", style = MaterialTheme.typography.bodyMedium)
             }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔹 Nickname Field
         OutlinedTextField(
-            value = nickname,
-            onValueChange = onNicknameChange,
+            value = locationName,
+            onValueChange = onLocationNameChange,
             label = { Text("Location Name") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier.fillMaxWidth()
@@ -84,7 +84,6 @@ fun DialogContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔹 Dropdown Menu for Selecting Location Type
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it }
@@ -122,7 +121,6 @@ fun DialogContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 🔹 Save As Section with Assist Chips
         Text(
             text = "Save As",
             style = MaterialTheme.typography.titleMedium,

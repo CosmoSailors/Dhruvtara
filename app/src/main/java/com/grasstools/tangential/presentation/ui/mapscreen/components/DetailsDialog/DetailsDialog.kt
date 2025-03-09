@@ -26,9 +26,6 @@ import com.grasstools.tangential.presentation.ui.mapscreen.components.DetailsDia
 fun DetailsDialog(
     onDismissRequest: () -> Unit,
     onLocationAdded: (String) -> Unit,
-    latitude: Double,
-    longitude: Double,
-    radius: Float,
     vm: MapsViewModel
 ) {
     var locationName by remember { mutableStateOf("") }
@@ -52,11 +49,8 @@ fun DetailsDialog(
             ) {
                 DialogHeader(onDismissRequest, onLocationAdded, locationName)
                 DialogContent(
-                    nickname = locationName,
-                    latitude = latitude,
-                    longitude = longitude,
-                    radius = radius,
-                    onNicknameChange = { locationName = it },
+                    locationName = locationName,
+                    onLocationNameChange = { locationName = it },
                     vm = vm
                 )
             }
