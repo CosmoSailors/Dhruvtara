@@ -1,6 +1,6 @@
 package com.grasstools.tangential.presentation.ui.mapscreen
 
-import AddNickNameDialog
+import DetailsDialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -89,7 +89,7 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
 
 
                 if (showDialogFlag) {
-                    AddNickNameDialog(
+                    DetailsDialog(
                         onDismissRequest = { viewModel.onDialogDismiss() },
                         onLocationAdded = { nickname ->
                             viewModel.onDialogSaveButtonClick(nickname)
