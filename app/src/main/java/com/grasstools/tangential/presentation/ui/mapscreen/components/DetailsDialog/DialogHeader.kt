@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 fun DialogHeader(
     onDismissRequest: () -> Unit,
     onLocationAdded: (String) -> Unit,
-    nickname: String
+    locationName: String
 ) {
     Row(
         modifier = Modifier
@@ -41,7 +41,7 @@ fun DialogHeader(
             fontWeight = FontWeight.Bold
         )
         Button(
-            onClick = { onLocationAdded(nickname) },
+            onClick = { onLocationAdded(locationName) },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(8.dp)
         ) {

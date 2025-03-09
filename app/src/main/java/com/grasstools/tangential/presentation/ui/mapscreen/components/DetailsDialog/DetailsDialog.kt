@@ -31,7 +31,7 @@ fun DetailsDialog(
     radius: Float,
     vm: MapsViewModel
 ) {
-    var nickname by remember { mutableStateOf("") }
+    var locationName by remember { mutableStateOf("") }
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -50,13 +50,13 @@ fun DetailsDialog(
                     .fillMaxWidth()
                     .padding(20.dp)
             ) {
-                DialogHeader(onDismissRequest, onLocationAdded, nickname)
+                DialogHeader(onDismissRequest, onLocationAdded, locationName)
                 DialogContent(
-                    nickname = nickname,
+                    nickname = locationName,
                     latitude = latitude,
                     longitude = longitude,
                     radius = radius,
-                    onNicknameChange = { nickname = it },
+                    onNicknameChange = { locationName = it },
                     vm = vm
                 )
             }
