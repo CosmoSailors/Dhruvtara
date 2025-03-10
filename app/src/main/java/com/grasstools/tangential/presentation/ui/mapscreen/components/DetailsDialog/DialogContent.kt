@@ -68,7 +68,7 @@ fun DialogContent(
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Latitude: $latitude", style = MaterialTheme.typography.bodyMedium)
                 Text(text = "Longitude: $longitude", style = MaterialTheme.typography.bodyMedium)
-                Text(text = "Radius: ${radius.roundToInt()}m", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "Radius: ${radius}m", style = MaterialTheme.typography.bodyMedium)
             }
         }
 

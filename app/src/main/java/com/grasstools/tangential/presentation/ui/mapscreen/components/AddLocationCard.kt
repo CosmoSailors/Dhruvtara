@@ -18,7 +18,7 @@ fun AddLocationCard(
     modifier: Modifier = Modifier,
     onSavedLocationsClick: () -> Unit,
     onAddLocationClick: () -> Unit,
-    sliderPosition: Float,
+    sliderPosition: Double,
     onSliderChange: (Float) -> Unit,
     onToggleShowAllMarkers: (toggle: Boolean) -> Unit,
     showAllMarkersFlag: StateFlow<Boolean>,
@@ -45,7 +45,7 @@ fun AddLocationCard(
             )
 
             Slider(
-                value = sliderPosition,
+                value = sliderPosition.toFloat(),
                 onValueChange = { onSliderChange(it) },
                 modifier = Modifier
                     .fillMaxWidth()

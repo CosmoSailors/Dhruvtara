@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -19,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.presentation.ui.alarmscreen.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
@@ -36,11 +36,15 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
     val latitude by viewModel.latitude.collectAsState()
     val longitude by viewModel.longitude.collectAsState()
     val showDialogFlag by viewModel.showDialogFlag.collectAsState()
-
+    val sliderPosition by viewModel.sliderPosition.collectAsState()
 
     fun resync() {
         geofenceManager.clear()
         geofenceManager.register(viewModel.dao.getAllGeofencesSnapshot())
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getCurrentLocation()
     }
 
     TangentialTheme {
@@ -48,9 +52,6 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
             Box(modifier = Modifier.fillMaxSize()) {
                 GoogleMapComposable(
                     modifier = Modifier.fillMaxSize(),
-                    sliderPosition = viewModel.sliderPosition,
-                    onLatLongChange = { viewModel.updateLatLong(it) },
-                    latLng = LatLng(latitude, longitude),
                     vm = viewModel
                 )
 
@@ -77,9 +78,9 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
                             .fillMaxWidth().height(200.dp),
                         onSavedLocationsClick =  onNavigateToLocationList ,
                         onAddLocationClick = {viewModel.onAddLocationClick()},
-                        sliderPosition = viewModel.sliderPosition,
+                        sliderPosition = sliderPosition,
                         onSliderChange = {
-                            viewModel.updateSliderPosition(it)
+                            viewModel.updateSliderPosition(it.toDouble())
                         },
                         showAllMarkersFlag = viewModel.showAllMarkersFlag,
                         onToggleShowAllMarkers ={ viewModel.toggleShowAllMarkers(it) }
