@@ -19,22 +19,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.grasstools.tangential.presentation.ui.alarmscreen.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
 import com.grasstools.tangential.services.GeofenceManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceManager) {
+fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceManager, viewModel: MapsViewModel = hiltViewModel()) {
 
-    val viewModel: MapsViewModel = viewModel()
-
-    val latitude by viewModel.latitude.collectAsState()
-    val longitude by viewModel.longitude.collectAsState()
     val showDialogFlag by viewModel.showDialogFlag.collectAsState()
     val sliderPosition by viewModel.sliderPosition.collectAsState()
 
@@ -52,7 +50,6 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
             Box(modifier = Modifier.fillMaxSize()) {
                 GoogleMapComposable(
                     modifier = Modifier.fillMaxSize(),
-                    vm = viewModel
                 )
 
                 Column(
@@ -99,7 +96,6 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
                               resync()
                            }
                         },
-                        vm = viewModel
                     )
                 }
             }

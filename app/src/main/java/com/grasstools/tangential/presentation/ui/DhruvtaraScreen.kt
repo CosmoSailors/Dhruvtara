@@ -125,7 +125,6 @@ fun DhruvtaraScreen(context: Context) {
                 LocationListScreen(
                     geofenceManager = it1,
                     onNavigationToMaps = { navController.navigate(route = MapsScreen) },
-                    onNavigateToAlert = { navController.navigate(route = AlertScreen) }
                 )
             }
 

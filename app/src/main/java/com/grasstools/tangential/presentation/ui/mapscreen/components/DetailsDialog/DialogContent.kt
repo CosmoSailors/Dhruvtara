@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 import kotlin.math.roundToInt
@@ -36,7 +37,7 @@ import kotlin.math.roundToInt
 fun DialogContent(
     locationName: String,
     onLocationNameChange: (String) -> Unit,
-    vm: MapsViewModel
+    vm: MapsViewModel = hiltViewModel()
 ) {
     var expanded by remember { mutableStateOf(false) }
     val locationTypes = listOf("DND", "Alarm")

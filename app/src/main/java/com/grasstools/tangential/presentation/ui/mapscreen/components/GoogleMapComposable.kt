@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -15,7 +16,7 @@ import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 @Composable
 fun GoogleMapComposable(
     modifier: Modifier = Modifier,
-    vm: MapsViewModel
+    vm: MapsViewModel = hiltViewModel()
 ) {
     var map by remember { mutableStateOf<GoogleMap?>(null) }
     var marker by remember { mutableStateOf<Marker?>(null) }

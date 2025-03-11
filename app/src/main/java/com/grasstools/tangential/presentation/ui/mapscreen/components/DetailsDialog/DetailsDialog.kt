@@ -17,16 +17,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 import com.grasstools.tangential.presentation.ui.mapscreen.components.DetailsDialog.DialogContent
 import com.grasstools.tangential.presentation.ui.mapscreen.components.DetailsDialog.DialogHeader
+import javax.inject.Inject
 
 @Composable
 fun DetailsDialog(
     onDismissRequest: () -> Unit,
     onLocationAdded: (String) -> Unit,
-    vm: MapsViewModel
+    vm: MapsViewModel = hiltViewModel()
+
 ) {
     var locationName by remember { mutableStateOf("") }
 
@@ -51,7 +54,6 @@ fun DetailsDialog(
                 DialogContent(
                     locationName = locationName,
                     onLocationNameChange = { locationName = it },
-                    vm = vm
                 )
             }
         }

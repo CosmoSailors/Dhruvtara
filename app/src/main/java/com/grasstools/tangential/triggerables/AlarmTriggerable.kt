@@ -12,7 +12,6 @@ import com.grasstools.tangential.utils.NavControllerHolder
 
 object AlarmTriggerable: Triggerable {
     override fun onEntry(config: String) {
-        Log.i("LOL", "Hey?")
         NavControllerHolder.navController?.navigate(AlertScreen)
 
     }

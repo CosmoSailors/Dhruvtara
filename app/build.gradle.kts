@@ -5,7 +5,7 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "2.0.21"
-
+    id("com.google.dagger.hilt.android")
 
 }
 
@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
@@ -77,7 +78,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation (libs.material)
     implementation(libs.androidx.room.ktx)
-    kapt("androidx.room:room-compiler:2.6.1")
+    kapt(libs.androidx.room.compiler)
 
     // Views/Fragments integration
     implementation(libs.androidx.navigation.fragment)
@@ -93,6 +94,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.accompanist.permissions)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
 
 
