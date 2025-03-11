@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.grasstools.tangential.data.db.TangentialDatabase
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class App: Application() {
     companion object {
         private var applicationInstance: App? = null
@@ -18,13 +20,7 @@ class App: Application() {
         }
     }
 
-    val database by lazy {
-        Room.databaseBuilder(
-            context = applicationContext, // Use applicationContext
-            klass = TangentialDatabase::class.java,
-            name = "tangential.db"
-        ).build()
-    }
+
 
     override fun onCreate() {
         super.onCreate()

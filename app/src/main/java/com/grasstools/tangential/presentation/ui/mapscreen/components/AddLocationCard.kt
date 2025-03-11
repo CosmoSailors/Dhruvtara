@@ -11,17 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun AddLocationCard(
     modifier: Modifier = Modifier,
     onSavedLocationsClick: () -> Unit,
     onAddLocationClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    sliderPosition: Float,
+    sliderPosition: Double,
     onSliderChange: (Float) -> Unit,
-    vm: MapsViewModel
+    onToggleShowAllMarkers: (toggle: Boolean) -> Unit,
+    showAllMarkersFlag: StateFlow<Boolean>,
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -45,7 +45,7 @@ fun AddLocationCard(
             )
 
             Slider(
-                value = sliderPosition,
+                value = sliderPosition.toFloat(),
                 onValueChange = { onSliderChange(it) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -92,8 +92,8 @@ fun AddLocationCard(
                 }
 
                 SettingsIconButton(
-                    showAllMarkersFlow = vm.showAllMarkersFlag,
-                    onToggleShowAllMarkers = { vm.toggleShowAllMarkers(it) }
+                    showAllMarkersFlow = showAllMarkersFlag,
+                    onToggleShowAllMarkers = { onToggleShowAllMarkers(it) }
                 )
             }
         }

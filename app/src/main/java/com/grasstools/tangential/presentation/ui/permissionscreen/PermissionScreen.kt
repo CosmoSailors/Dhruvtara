@@ -1,14 +1,11 @@
-package com.grasstools.tangential.presentation.ui
+package com.grasstools.tangential.presentation.ui.permissionscreen
 
 import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -20,26 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.grasstools.tangential.presentation.ui.alarmscreen.ui.theme.TangentialTheme
-import com.grasstools.tangential.presentation.ui.mapscreen.MapsActivity
+import com.grasstools.tangential.presentation.ui.permissionscreen.components.PermissionCard
 
-class PermissionsManager : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            TangentialTheme {
-                PermissionsScreen()
-            }
-        }
-    }
-}
 
 @Composable
-fun PermissionsScreen() {
+fun PermissionsScreen(onNavigateToMaps: () -> Unit) {
     val context = LocalContext.current
     var locationGranted by remember { mutableStateOf(checkLocationPermission(context)) }
     var notificationGranted by remember { mutableStateOf(checkNotificationPermission(context)) }
-    var dndAccessGranted by remember { mutableStateOf(checkDndAccess(context)) }
+
+    var hasDndPermission by remember { mutableStateOf(checkDndAccess(context)) }
+
 
     val locationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -49,10 +37,10 @@ fun PermissionsScreen() {
         ActivityResultContracts.RequestPermission()
     ) { granted -> notificationGranted = granted }
 
-    LaunchedEffect(locationGranted, notificationGranted, dndAccessGranted) {
-        if (locationGranted && notificationGranted && dndAccessGranted) {
-            navigateToNextActivity(context)
-            (context as? ComponentActivity)?.finish()
+    LaunchedEffect(locationGranted, notificationGranted) {
+        while (true) {
+            hasDndPermission = checkDndAccess(context)
+            kotlinx.coroutines.delay(1000)
         }
     }
 
@@ -76,6 +64,17 @@ fun PermissionsScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             PermissionCard(
+                title = "DND Access",
+                description = "Allows automatic Do Not Disturb mode",
+                granted = hasDndPermission,
+                onRequest = {
+                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                    context.startActivity(intent)
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PermissionCard(
                 title = "Location Access",
                 description = "Required for geofencing & map features",
                 granted = locationGranted,
@@ -93,24 +92,15 @@ fun PermissionsScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            PermissionCard(
-                title = "DND Access",
-                description = "Allows automatic Do Not Disturb mode",
-                granted = dndAccessGranted,
-                onRequest = {
-                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                    context.startActivity(intent)
-                }
-            )
+
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = {
-                    navigateToNextActivity(context)
-                    (context as? ComponentActivity)?.finish()
+                    onNavigateToMaps()
                 },
-                enabled = locationGranted && notificationGranted,
+                enabled = locationGranted && notificationGranted && hasDndPermission,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
@@ -120,64 +110,6 @@ fun PermissionsScreen() {
             }
         }
     }
-}
-
-@Composable
-fun PermissionCard(
-    title: String,
-    description: String,
-    granted: Boolean,
-    onRequest: () -> Unit
-) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (!granted) {
-                Button(
-                    onClick = onRequest,
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text("Grant Access", color = MaterialTheme.colorScheme.onPrimary)
-                }
-            } else {
-                Text(
-                    text = "✅ Permission Granted",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-            }
-        }
-    }
-}
-
-private fun navigateToNextActivity(context: Context) {
-    val intent = Intent(context, MapsActivity::class.java)
-    context.startActivity(intent)
 }
 
 private fun checkLocationPermission(context: Context): Boolean {
@@ -193,7 +125,6 @@ private fun checkNotificationPermission(context: Context): Boolean {
 }
 
 private fun checkDndAccess(context: Context): Boolean {
-    val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     return notificationManager.isNotificationPolicyAccessGranted
 }

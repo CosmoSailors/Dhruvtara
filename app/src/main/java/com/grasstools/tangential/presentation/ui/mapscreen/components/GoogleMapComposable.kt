@@ -6,30 +6,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
+import com.grasstools.tangential.domain.model.RadiusConstraints
 import com.grasstools.tangential.presentation.ui.mapscreen.MapsViewModel
 
 @Composable
 fun GoogleMapComposable(
     modifier: Modifier = Modifier,
-    sliderPosition: Float,
-    onLatLongChange: (LatLng) -> Unit,
-    latLng: LatLng,
-    vm: MapsViewModel
+    vm: MapsViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     var map by remember { mutableStateOf<GoogleMap?>(null) }
     var marker by remember { mutableStateOf<Marker?>(null) }
     var circle by remember { mutableStateOf<Circle?>(null) }
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
     val showAllMarkers by vm.showAllMarkersFlag.collectAsState()
     val allLocations by vm.allGeofences.collectAsState()
     val latitude by vm.latitude.collectAsState()
     val longitude by vm.longitude.collectAsState()
     val shouldRecenterMap by vm.shouldRecenterMap.collectAsState()
+    val sliderPosition by vm.sliderPosition.collectAsState()
+
+    val radiusRange = RadiusConstraints.maximumRadius - RadiusConstraints.minimumRadius
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -42,7 +42,7 @@ fun GoogleMapComposable(
 
                         marker = googleMap.addMarker(
                             MarkerOptions()
-                                .position(latLng)
+                                .position(LatLng(latitude, longitude))
                                 .title("Set Location")
                                 .draggable(true)
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
@@ -50,25 +50,22 @@ fun GoogleMapComposable(
 
                         circle = googleMap.addCircle(
                             CircleOptions()
-                                .center(latLng)
-                                .radius(50.0 + (sliderPosition * 950))
-                                .strokeColor(0xFF000000.toInt()) // Black stroke
-                                .fillColor(0x5500A8E0.toInt()) // Semi-transparent blue
+                                .center(LatLng(latitude, longitude))
+                                .radius(RadiusConstraints.minimumRadius + (sliderPosition * radiusRange))
+                                .strokeColor(0xFF000000.toInt())
+                                .fillColor(0x5500A8E0)
                         )
 
                         googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
                             override fun onMarkerDragStart(marker: Marker) {}
                             override fun onMarkerDrag(marker: Marker) {
-                                circle?.center = marker.position
-                                onLatLongChange(marker.position)
+                                vm.updateLatLong(marker.position)
                             }
                             override fun onMarkerDragEnd(marker: Marker) {}
                         })
 
                         googleMap.setOnMapClickListener { newLatLng ->
-                            marker?.position = newLatLng
-                            circle?.center = newLatLng
-                            onLatLongChange(newLatLng)
+                            vm.updateLatLong(newLatLng)
                         }
                     }
                 }
@@ -83,7 +80,7 @@ fun GoogleMapComposable(
         circle?.center = newLatLng
 
         if (shouldRecenterMap) {
-            map?.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 15.0f))
+            map?.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 17.0f))
             vm.setShouldRecenterMap(false)
         }
     }
@@ -92,10 +89,9 @@ fun GoogleMapComposable(
         map?.let { googleMap ->
             googleMap.clear()
 
-            // ✅ Re-add the main draggable marker after clearing other markers
             marker = googleMap.addMarker(
                 MarkerOptions()
-                    .position(marker?.position ?: latLng)
+                    .position(marker?.position ?: LatLng(latitude, longitude))
                     .title("Set Location")
                     .draggable(true)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
@@ -103,8 +99,8 @@ fun GoogleMapComposable(
 
             circle = googleMap.addCircle(
                 CircleOptions()
-                    .center(marker?.position ?: latLng)
-                    .radius(50.0 + (sliderPosition * 950))
+                    .center(marker?.position ?: LatLng(latitude, longitude))
+                    .radius(RadiusConstraints.minimumRadius + (sliderPosition * radiusRange))
                     .strokeColor(0xFF000000.toInt())
                     .fillColor(0x5500A8E0.toInt())
             )
@@ -120,9 +116,9 @@ fun GoogleMapComposable(
                     }
 
                     val circleColor = if (location.enabled) {
-                        0x4400FF00.toInt() // Light Green
+                        0x4400FF00
                     } else {
-                        0x44FF0000.toInt() // Light Red
+                        0x44FF0000
                     }
 
                     googleMap.addCircle(
@@ -149,7 +145,7 @@ fun GoogleMapComposable(
     }
 
     LaunchedEffect(sliderPosition) {
-        circle?.radius = 50.0 + (sliderPosition * 950)
+        circle?.radius = RadiusConstraints.minimumRadius + (sliderPosition * radiusRange)
     }
 
     DisposableEffect(Unit) {
@@ -158,3 +154,4 @@ fun GoogleMapComposable(
         }
     }
 }
+

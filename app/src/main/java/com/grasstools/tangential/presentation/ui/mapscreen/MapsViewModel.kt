@@ -1,33 +1,40 @@
 package com.grasstools.tangential.presentation.ui.mapscreen
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.util.Log
 import android.Manifest
+import android.app.Application
 import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import com.grasstools.tangential.data.db.GeofenceDao
+import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.repositories.GeofenceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MapsViewModel(
-    private val dao: GeofenceDao,
-    private val context: Context
+@HiltViewModel
+class MapsViewModel @Inject constructor(
+    private val application: Application,
+    private val repository: GeofenceRepository
 ) : ViewModel() {
 
-    var sliderPosition by mutableFloatStateOf(0f)
-        private set
+    private val _showDialogFlag = MutableStateFlow(false)
+    val showDialogFlag: StateFlow<Boolean> = _showDialogFlag.asStateFlow()
+
+    private val _sliderPosition = MutableStateFlow(0.0)
+    val sliderPosition: StateFlow<Double> = _sliderPosition.asStateFlow()
 
     private val _latitude = MutableStateFlow(0.0)
     val latitude: StateFlow<Double> = _latitude.asStateFlow()
@@ -35,8 +42,8 @@ class MapsViewModel(
     private val _longitude = MutableStateFlow(0.0)
     val longitude: StateFlow<Double> = _longitude.asStateFlow()
 
-    var radius by mutableFloatStateOf(50.0f)
-        private set
+    private val _radius = MutableStateFlow(50.0)
+    val radius: StateFlow<Double> = _radius.asStateFlow()
 
     private val _type = MutableStateFlow(GeofenceType.DND)
     val type: StateFlow<GeofenceType> = _type.asStateFlow()
@@ -52,7 +59,7 @@ class MapsViewModel(
 
     init {
         viewModelScope.launch {
-            dao.getAllGeofences().collect { geofences ->
+            repository.getAllGeofenceFromDB().collect { geofences ->
                 _allGeofences.value = geofences
             }
         }
@@ -62,18 +69,17 @@ class MapsViewModel(
         _showAllMarkersFlag.value = value
     }
 
-    fun updateRadius(value: Float) {
-        radius = value
+    fun updateRadius(value: Double) {
+        _radius.value = value
     }
 
     fun updateLatLong(value: LatLng) {
         _latitude.value = value.latitude
         _longitude.value = value.longitude
-        Log.i("MapsViewModel", "updateLatLong: ${_latitude.value}, ${_longitude.value}")
     }
 
-    fun updateSliderPosition(value: Float) {
-        sliderPosition = value
+    fun updateSliderPosition(value: Double) {
+        _sliderPosition.value = value
         updateRadius(50 + (950 * value))
     }
 
@@ -81,14 +87,14 @@ class MapsViewModel(
         _type.value = value
     }
 
-    suspend fun insertLocationTrigger(geofence: Geofence) {
-        dao.insertGeofence(geofence)
-        loadAllGeofences()
+    private suspend fun insertLocationTrigger(geofence: Geofence) {
+        repository.insertGeofence(geofence)
+        loadAllGeofence()
     }
 
-    suspend fun loadAllGeofences() {
+    private fun loadAllGeofence() {
         viewModelScope.launch {
-            dao.getAllGeofences().collect { geofences ->
+            repository.getAllGeofenceFromDB().collect { geofences ->
                 _allGeofences.value = geofences
             }
         }
@@ -101,12 +107,12 @@ class MapsViewModel(
     @SuppressLint("MissingPermission")
     fun getCurrentLocation() {
         if (ContextCompat.checkSelfPermission(
-                context,
+                application,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             val fusedLocationClient: FusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(context)
+                LocationServices.getFusedLocationProviderClient(application)
 
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
@@ -116,5 +122,32 @@ class MapsViewModel(
                 }
             }
         }
+    }
+
+    fun onDialogSaveButtonClick(nickname: String) {
+
+        val newGeofence = Geofence(
+            name = nickname,
+            latitude = latitude.value,
+            longitude = longitude.value,
+            radius = radius.value.toFloat(),
+            type = type.value,
+            config = "",
+            enabled = true
+        )
+        viewModelScope.launch {
+            insertLocationTrigger(newGeofence)
+        }.invokeOnCompletion {
+            onDialogDismiss()
+        }
+
+    }
+
+    fun onAddLocationClick(){
+        _showDialogFlag.value = true
+    }
+
+    fun onDialogDismiss(){
+        _showDialogFlag.value = false
     }
 }
