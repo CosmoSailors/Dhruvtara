@@ -35,10 +35,11 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
 
     val showDialogFlag by viewModel.showDialogFlag.collectAsState()
     val sliderPosition by viewModel.sliderPosition.collectAsState()
+    val geofenceList by viewModel.allGeofences.collectAsState()
 
     fun resync() {
         geofenceManager.clear()
-        geofenceManager.register(viewModel.dao.getAllGeofencesSnapshot())
+        geofenceManager.register(geofenceList)
     }
 
     LaunchedEffect(Unit) {

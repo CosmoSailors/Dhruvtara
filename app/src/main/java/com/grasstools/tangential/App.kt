@@ -20,13 +20,7 @@ class App: Application() {
         }
     }
 
-    val database by lazy {
-        Room.databaseBuilder(
-            context = applicationContext, // Use applicationContext
-            klass = TangentialDatabase::class.java,
-            name = "tangential.db"
-        ).build()
-    }
+
 
     override fun onCreate() {
         super.onCreate()

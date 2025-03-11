@@ -11,10 +11,12 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -47,10 +49,12 @@ object PermissionScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun DhruvtaraScreen(context: Context) {
+fun DhruvtaraScreen(context: Context, viewModel: DhruvtaraViewmodel = hiltViewModel()) {
 
     var geofenceManager by remember { mutableStateOf<GeofenceManager?>(null) }
     var geofenceManagerBound by remember { mutableStateOf(false) }
+
+    val geofenceList by viewModel.allGeofence.collectAsState()
 
     val locationPermissionState = rememberPermissionState(
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -69,7 +73,7 @@ fun DhruvtaraScreen(context: Context) {
 
                 if (!geofenceManager!!.isInit) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        for (geofence in (context.applicationContext as App).database.dao().getAllGeofencesSnapshot()) {
+                        for (geofence in geofenceList) {
                             geofenceManager?.register(geofence)
                         }
                         geofenceManager?.isInit = true

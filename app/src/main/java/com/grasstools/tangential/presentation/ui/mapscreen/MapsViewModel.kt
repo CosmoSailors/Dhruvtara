@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
+import com.grasstools.tangential.repositories.GeofenceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,11 +26,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapsViewModel @Inject constructor(
-    private val application: Application
+    private val application: Application,
+    private val repository: GeofenceRepository
 ) : ViewModel() {
-
-    private val database by lazy { (application as App).database }
-    val dao = database.dao()
 
     private val _showDialogFlag = MutableStateFlow(false)
     val showDialogFlag: StateFlow<Boolean> = _showDialogFlag.asStateFlow()
@@ -60,7 +59,7 @@ class MapsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dao.getAllGeofences().collect { geofences ->
+            repository.getAllGeofenceFromDB().collect { geofences ->
                 _allGeofences.value = geofences
             }
         }
@@ -89,13 +88,13 @@ class MapsViewModel @Inject constructor(
     }
 
     private suspend fun insertLocationTrigger(geofence: Geofence) {
-        dao.insertGeofence(geofence)
-        loadAllGeofences()
+        repository.insertGeofence(geofence)
+        loadAllGeofence()
     }
 
-    private suspend fun loadAllGeofences() {
+    private fun loadAllGeofence() {
         viewModelScope.launch {
-            dao.getAllGeofences().collect { geofences ->
+            repository.getAllGeofenceFromDB().collect { geofences ->
                 _allGeofences.value = geofences
             }
         }

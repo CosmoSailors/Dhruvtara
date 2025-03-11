@@ -20,7 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.grasstools.tangential.presentation.ui.locationlistscreen.components.LocationRow
 import com.grasstools.tangential.services.GeofenceManager
 import kotlinx.coroutines.CoroutineScope
@@ -31,17 +31,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun LocationListScreen(
     onNavigationToMaps: () -> Unit,
-    geofenceManager: GeofenceManager
+    geofenceManager: GeofenceManager,
+    viewModel: LocationViewModel = hiltViewModel()
 ) {
-    val viewModel: LocationViewModel = viewModel()
 
-    val geofencesList by viewModel.getAllRecords().collectAsState(initial = emptyList())
+    val geofenceList by viewModel.allGeofence.collectAsState(initial = emptyList())
     var expandedGeofenceId by remember { mutableStateOf<String?>(null) }
 
     fun resync() {
         CoroutineScope(Dispatchers.IO).launch {
             geofenceManager.clear()
-            geofenceManager.register(viewModel.dao.getAllGeofencesSnapshot())
+            geofenceManager.register(geofenceList)
         }
     }
 
@@ -63,7 +63,7 @@ fun LocationListScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 8.dp)
         ) {
-            items(geofencesList) { geofence ->
+            items(geofenceList) { geofence ->
                 LocationRow(
                     geofence = geofence,
                     expandedGeofenceId = expandedGeofenceId,
