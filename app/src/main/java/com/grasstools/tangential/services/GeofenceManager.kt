@@ -15,10 +15,11 @@ import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.triggerables.*
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Timer
 import java.util.TimerTask
 
-
+@AndroidEntryPoint
 class GeofenceManager : Service() {
     fun register(geofence: Geofence) {
         taggedGeofences.add(TaggedGeofence(false, geofence))
@@ -100,7 +101,8 @@ class GeofenceManager : Service() {
     }
 
     private val locationProvider = LocationServices.getFusedLocationProviderClient(
-        App.getContext()!!)
+        App.getContext()
+    )
 
     private val binder = LocalBinder()
 

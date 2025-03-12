@@ -1,4 +1,5 @@
 package com.grasstools.tangential
+
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -17,37 +18,43 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
+    private var keepSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val splashscreen = installSplashScreen()
-        var keepSplashScreen = true
-        splashscreen.setKeepOnScreenCondition { keepSplashScreen }
+        setupSplashScreen()
+        setContent { DhruvtaraScreen(this) }
+
+        createNotificationChannel()
+        startGeofenceService()
+    }
+
+    private fun setupSplashScreen() {
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { keepSplashScreen }
         lifecycleScope.launch {
             delay(1000)
             keepSplashScreen = false
         }
+    }
 
-        setContent {
-            DhruvtaraScreen(this)
-        }
-
-        val notifChannel = NotificationChannel(
+    private fun createNotificationChannel() {
+        val notificationChannel = NotificationChannel(
             "SERVICE_CHAN",
             getString(R.string.notif_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
-        )
-        notifChannel.description = getString(R.string.notif_channel_desc)
-        val notificationManager =
-            getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(notifChannel)
+        ).apply {
+            description = getString(R.string.notif_channel_desc)
+        }
 
-        val intent = Intent(this, GeofenceManager::class.java)
-        this.startForegroundService(intent)
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(notificationChannel)
     }
 
+    private fun startGeofenceService() {
+        val intent = Intent(this, GeofenceManager::class.java)
+        startForegroundService(intent)
+    }
 }
-

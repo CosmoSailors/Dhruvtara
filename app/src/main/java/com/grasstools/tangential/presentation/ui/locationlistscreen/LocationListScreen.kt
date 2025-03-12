@@ -31,19 +31,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun LocationListScreen(
     onNavigationToMaps: () -> Unit,
-    geofenceManager: GeofenceManager,
     viewModel: LocationViewModel = hiltViewModel()
 ) {
 
     val geofenceList by viewModel.allGeofence.collectAsState(initial = emptyList())
     var expandedGeofenceId by remember { mutableStateOf<String?>(null) }
 
-    fun resync() {
-        CoroutineScope(Dispatchers.IO).launch {
-            geofenceManager.clear()
-            geofenceManager.register(geofenceList)
-        }
-    }
+
 
     Scaffold(
         topBar = {
@@ -69,11 +63,11 @@ fun LocationListScreen(
                     expandedGeofenceId = expandedGeofenceId,
                     onToggle = {
                         viewModel.toggleEnabled(geofence)
-                        resync()
+                        viewModel.resync()
                     },
                     onDelete = {
                         viewModel.deleteGeofence(geofence)
-                        resync()
+                        viewModel.resync()
                     },
                     onExpand = { id -> expandedGeofenceId = if (expandedGeofenceId == id) null else id }
                 )

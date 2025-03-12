@@ -19,6 +19,7 @@ import com.grasstools.tangential.App
 import com.grasstools.tangential.domain.model.Geofence
 import com.grasstools.tangential.domain.model.GeofenceType
 import com.grasstools.tangential.repositories.GeofenceRepository
+import com.grasstools.tangential.services.GeofenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,7 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MapsViewModel @Inject constructor(
     private val application: Application,
-    private val repository: GeofenceRepository
+    private val repository: GeofenceRepository,
+    private val geofenceManager: GeofenceManager
 ) : ViewModel() {
 
     private val _showDialogFlag = MutableStateFlow(false)
@@ -149,5 +151,10 @@ class MapsViewModel @Inject constructor(
 
     fun onDialogDismiss(){
         _showDialogFlag.value = false
+    }
+
+    fun resync() {
+        geofenceManager.clear()
+        geofenceManager.register(allGeofences.value)
     }
 }

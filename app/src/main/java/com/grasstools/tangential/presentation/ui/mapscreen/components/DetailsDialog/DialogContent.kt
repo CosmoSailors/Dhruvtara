@@ -45,14 +45,13 @@ fun DialogContent(
     val type by vm.type.collectAsState()
     val latitude by vm.latitude.collectAsState()
     val longitude by vm.longitude.collectAsState()
-    val radius = vm.radius
+    val radius by vm.radius.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // 🔹 Location Info
         Text(
             text = "Location Info",
             style = MaterialTheme.typography.titleSmall,
@@ -69,7 +68,7 @@ fun DialogContent(
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Latitude: $latitude", style = MaterialTheme.typography.bodyMedium)
                 Text(text = "Longitude: $longitude", style = MaterialTheme.typography.bodyMedium)
-                Text(text = "Radius: ${radius}m", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "Radius: ${radius} m", style = MaterialTheme.typography.bodyMedium)
             }
         }
 

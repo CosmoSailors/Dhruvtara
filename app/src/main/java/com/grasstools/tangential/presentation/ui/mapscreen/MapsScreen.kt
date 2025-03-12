@@ -24,23 +24,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.grasstools.tangential.presentation.ui.alarmscreen.ui.theme.TangentialTheme
 import com.grasstools.tangential.presentation.ui.mapscreen.components.AddLocationCard
 import com.grasstools.tangential.presentation.ui.mapscreen.components.GoogleMapComposable
-import com.grasstools.tangential.services.GeofenceManager
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceManager, viewModel: MapsViewModel = hiltViewModel()) {
+fun MapsScreen(onNavigateToLocationList: () -> Unit, viewModel: MapsViewModel = hiltViewModel()) {
 
     val showDialogFlag by viewModel.showDialogFlag.collectAsState()
     val sliderPosition by viewModel.sliderPosition.collectAsState()
-    val geofenceList by viewModel.allGeofences.collectAsState()
-
-    fun resync() {
-        geofenceManager.clear()
-        geofenceManager.register(geofenceList)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.getCurrentLocation()
@@ -94,7 +86,7 @@ fun MapsScreen(onNavigateToLocationList: () -> Unit, geofenceManager: GeofenceMa
                             viewModel.onDialogSaveButtonClick(nickname)
                             onNavigateToLocationList()
                             CoroutineScope(Dispatchers.IO).launch {
-                              resync()
+                              viewModel.resync()
                            }
                         },
                     )

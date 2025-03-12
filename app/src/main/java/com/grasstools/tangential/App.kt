@@ -7,23 +7,19 @@ import com.grasstools.tangential.data.db.TangentialDatabase
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class App: Application() {
+class App : Application() {
+
     companion object {
-        private var applicationInstance: App? = null
+        @Volatile
+        private lateinit var instance: App
 
-        fun getInstance(): App? {
-            return applicationInstance
-        }
+        fun getInstance(): App = instance
 
-        fun getContext(): Context? {
-            return applicationInstance?.applicationContext
-        }
+        fun getContext(): Context = instance.applicationContext
     }
-
-
 
     override fun onCreate() {
         super.onCreate()
-        applicationInstance = this
+        instance = this
     }
 }
